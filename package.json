@@ -1,0 +1,67 @@
+{
+  "name": "scripto",
+  "main": "public/electron.js",
+  "version": "0.1.1",
+  "private": true,
+  "homepage": "./",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "react": "^16.4.0",
+    "react-autosize-textarea": "^3.0.3",
+    "react-dom": "^16.4.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "1.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "dev": "nf start",
+    "electron-dev": "electron src/dev-electron-main.js",
+    "preelectron-pack": "npm run build",
+    "electron-pack": "electron-builder --dir",
+    "preelectron-dist": "npm run build",
+    "electron-dist": "electron-builder"
+  },
+  "build": {
+    "productName": "Scripto",
+    "appId": "com.scripto.scripto",
+    "icon": "build/icon.icns",
+    "mac": {
+      "category": "public.app-category.utilities",
+      "extendInfo": [
+        {
+          "CFBundleTypeExtensions": [
+            "scripto"
+          ],
+          "CFBundleTypeIconFile": "scriptofile.icns",
+          "CFBundleTypeName": "Screenplay File",
+          "CFBundleTypeRole": "Editor",
+          "LSHandlerRank": "Alternate"
+        }
+      ]
+    },
+    "dmg": {
+      "icon": "installer.icns"
+    },
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "assets/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  },
+  "files": [
+    "build/**/*",
+    "node_modules/**/*",
+    "assets/**/*"
+  ],
+  "devDependencies": {
+    "electron": "^2.0.2",
+    "foreman": "^3.0.0",
+    "electron-builder": "^20.15.1"
+  }
+}

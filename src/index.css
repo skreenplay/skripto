@@ -1,0 +1,76 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "Liberation Mono", monospace;
+  background:#E1DAC9;
+  color: #7E7E7E;
+}
+
+
+
+
+.switch {
+  position: relative;
+  display: inline-block;
+  margin:6pt;
+  margin-top:8pt;
+  width: 36pt;
+  min-width:36pt;
+  height: 14pt;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #7E7E7E;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12pt;
+  width: 12pt;
+  left: 1px;
+  bottom: 1px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #7E7E7E;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 3pt #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22pt);
+  background-color: #5A5A59;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+p {
+  color:#7E7E7E;
+  font-size: 12pt
+}

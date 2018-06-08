@@ -1,0 +1,84 @@
+.scripto {
+  font-family: "Liberation Mono";
+  background-color:transparent;
+  color:#7E7E7E;
+  font-size: 12pt;
+}
+.input {
+  border-width: 0;
+  border-bottom-width: .5pt;
+  border-color: transparent;
+  width:100%;
+}
+.input:focus {
+  border-width:0;
+  border-bottom-width: .5pt;
+  border-color: #7E7E7E;
+  outline: 0;
+}
+.scripto.§A {
+  text-align: center;
+  font-size: 14pt;
+  line-height: 14pt;
+  padding-top:7pt;
+  padding-botto2m:7pt;
+  margin:0
+}
+.scripto.§S {
+  text-align: center;
+  font-size: 12pt;
+  margin:0;
+  padding-top:6pt;
+  padding-bottom:6pt;
+}
+
+.scripto.§C {
+  text-align: center;
+  font-size: 12pt;
+  text-transform: uppercase;
+  margin:0;
+  padding-top:3pt;
+  padding-bottom:0pt;
+}
+.scripto.§CA {
+  text-align: center;
+  font-size: 9pt;
+  margin:0pt;
+  padding-top:2pt;
+  padding-bottom:3pt;
+}
+
+.scripto.§D {
+  resize: none;
+  width: 256pt;
+  display: block;
+  margin: 0 auto;
+  padding-top:6pt;
+  padding-bottom:6pt;
+  font-size: 12pt;
+  line-height: 18pt;
+}
+
+.scripto.§P {
+  resize: none;
+  display: block;
+  margin: 0 auto;
+  padding-top:2pt;
+  padding-bottom:6pt;
+  font-size: 12pt;
+}
+
+.scripto.§T {
+  display: block;
+  margin: 0 auto;
+  padding-top:4pt;
+  padding-bottom:7pt;
+  font-size: 14pt;
+}
+.scripto.§ST {
+  display: block;
+  margin: 0 auto;
+  padding-top:4pt;
+  padding-bottom:7pt;
+  font-size: 12pt;
+}

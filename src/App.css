@@ -1,0 +1,202 @@
+@mixin flexbox() {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+}
+
+@mixin flex($values) {
+  -webkit-box-flex: $values;
+  -moz-box-flex:  $values;
+  -webkit-flex:  $values;
+  -ms-flex:  $values;
+  flex:  $values;
+}
+
+.App {
+  position: absolute;
+  height:100%;
+  width:100%;
+  top:0;
+  left:0;
+  display: flex;
+  flex-flow: column;
+  -webkit-app-region: drag;
+}
+
+
+
+.App-header {
+  background-color: #E6DED2;
+  height:28pt;
+  min-height:28pt;
+  margin:0pt;
+  padding:0pt;
+  color: rgb(40,40,40);
+  border-style: solid;
+  border-width: 0;
+  border-bottom-width: 0.5pt !important;
+  border-color:#D3CDBD;
+  transition: background-color .3s;
+}
+.App-content {
+  display: flex;
+  flex:1;
+  flex-direction: column;
+  overflow: auto;
+  transition: background-color .3s;
+}
+
+.App-title {
+  font-size: 10pt;
+  padding:0pt;
+  margin:6pt;
+  font-weight: normal;
+  flex:1;
+  height: 16pt;
+  line-height: 16pt;
+  color:#7E7E7E
+}
+
+.App-intro {
+  font-size: large;
+}
+
+
+.Layout-flex {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  flex:1;
+}
+.Layout-left {
+  flex-basis:152pt;
+  min-width: 152pt;
+  border-style:solid;
+  border-width: 0pt;
+  border-right-width: 0.5pt !important;
+  border-color:#D3CDBD;
+  margin:0pt;
+  padding:0pt;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+}
+.Layout-main {
+  display: flex;
+  flex:1;
+  flex-direction: row;
+}
+
+/* Specific Values */
+
+
+.Script-layout {
+  display: flex;
+  flex-wrap: nowrap;
+  flex:1;
+  flex-direction: row;
+  align-items: stretch;
+  overflow: hidden;
+}
+.Script-main {
+  flex:1;
+  flex-shrink: 0;
+  background:;
+  overflow: auto;
+}
+.Script-Right {
+  max-width: 96pt;
+  display:flex;
+  flex:1;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.Script-Right-Button-Box {
+  min-height:28pt;
+  display: flex;
+  flex-direction: row;
+}
+.Script-Right-Spacer {
+  flex:1;
+}
+.Script-Right-Label {
+  flex:1;
+  color:#b0ad9e;
+  font-size: 8pt;
+  font-weight: "100";
+  text-align: center;
+  line-height: 16pt;
+}
+.Script-Right-Button {
+  flex:1;
+  margin:3pt;
+  border-style: solid;
+  border-width: 0.2pt;
+  border-radius: 2pt;
+  color:#707070;
+  text-decoration:underline;
+  text-align: center;
+  font-weight: normal;
+  line-height: 20pt;
+  font-size: 8pt;
+}
+.Script-Right-Button.Primary {
+  color:#346D2F;
+  background-color:transparent;
+  border-color: #346D2F;
+  border-width: 0.5pt;
+  box-shadow: 0 3pt 3pt 3pt rgba(0,0,0,0.07);
+  font-size: 9pt;
+}
+
+.Script-Placeholder-box {
+  display: block;
+  min-height:900px;
+  width: 380pt;
+  margin:10pt auto;
+  padding:1pt;
+}
+.Script-Placeholder {
+  background:#7E7E7E;
+  display:block;
+  min-height:14pt;
+  border-radius: 1pt;
+  margin:4pt;
+}
+.Script-Placeholder.paragraph {
+  background:transparent;
+  margin:0;
+  max-width:300pt;
+  margin:0 auto;
+  margin-top: 12pt;
+}
+.Script-Placeholder.p-line {
+  margin-top:7pt;
+}
+.Script-Placeholder.p-line-indent {
+  margin-top:7pt;
+  margin-left:24pt
+}
+.Script-Placeholder.title {
+  height:18pt;
+  width:212pt;
+  margin:7pt auto;
+}
+.Script-Placeholder.subtitle {
+  height:12pt;
+  width:128pt;
+  margin:7pt auto;
+}
+.Script-Placeholder.c-box {
+  background:transparent;
+  margin:0;
+  max-width:300pt;
+  margin:0pt auto;
+  margin-top: 21pt
+}
+.Script-Placeholder.character {
+  width:64pt;
+}
