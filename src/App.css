@@ -23,6 +23,7 @@
   display: flex;
   flex-flow: column;
   -webkit-app-region: drag;
+  background: #E1D4C6;
 }
 
 
@@ -71,7 +72,7 @@
   flex:1;
 }
 .Layout-left {
-  flex-basis:152pt;
+  flex-basis:196pt;
   min-width: 152pt;
   border-style:solid;
   border-width: 0pt;
@@ -80,13 +81,56 @@
   margin:0pt;
   padding:0pt;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
 }
 .Layout-main {
   display: flex;
   flex:1;
   flex-direction: row;
+}
+
+
+
+/* Left Layout */
+.Global-layout {
+  flex:1;
+  opacity: .1;
+  transition: opacity .2s;
+}
+.Global-layout:hover {
+  opacity: 1;
+}
+
+.Global-layout-choicebox {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 36pt;
+  border-style: solid;
+  border-width: 0pt;
+  border-bottom-width: 0.5pt;
+  border-radius:
+}
+.Global-layout-choice {
+  flex:1;
+  border-width: 0pt;
+  border-bottom-width: 0.5pt;
+  background-image:url('./icons/info.png');
+  background-repeat: no-repeat;;
+  background-position: center;
+}
+.Global-layout-choice:hover {
+  background-color:rgba(95,95,95,0.08);
+}
+.Global-layout-choice.info {
+  background-image:url('./icons/info.png');
+}
+.Global-layout-choice.write {
+  background-image:url('./icons/pen.png');
+}
+.Global-layout-content {
+  color: #7e7e7e
 }
 
 /* Specific Values */
@@ -101,13 +145,14 @@
   overflow: hidden;
 }
 .Script-main {
-  flex:1;
+  flex:0;
   flex-shrink: 0;
   background:;
   overflow: auto;
+  min-width: 480pt;
 }
 .Script-Right {
-  max-width: 96pt;
+  min-width: 96pt;
   display:flex;
   flex:1;
   flex-direction: column;
@@ -127,8 +172,10 @@
   color:#b0ad9e;
   font-size: 8pt;
   font-weight: "100";
-  text-align: center;
+  text-align: right;
+  margin-right:6pt;
   line-height: 16pt;
+
 }
 .Script-Right-Button {
   flex:1;
@@ -155,9 +202,10 @@
 .Script-Placeholder-box {
   display: block;
   min-height:900px;
-  width: 380pt;
+  width: 420pt;
+  min-width: 420pt;
   margin:10pt auto;
-  padding:1pt;
+  padding:20pt;
 }
 .Script-Placeholder {
   background:#7E7E7E;

@@ -1,0 +1,59 @@
+{
+  "file": null,
+  "meta": {
+    "title": "LALAlala",
+    "synopsis": "This is a synopsis",
+    "authors": "The Duck, .."
+  },
+  "global": {
+    "characters": [
+      {
+        "name": "Bridget",
+        "id": 0,
+        "role": "The link with all characters",
+        "description": "bla",
+        "hierarchy": 1
+      }
+    ],
+    "locations": [
+      {
+        "name": "Central Perk",
+        "id": 1,
+        "parent": null
+      }
+    ]
+  },
+  "script": [
+    "§A  This is an act",
+    "§S This is a scene",
+    "§C Character",
+    "§D First item",
+    "§D Second dialog",
+    "§D Hello",
+    "§D jkljdslk",
+    "§D Polo",
+    "§D sdfsdf\nsdfsf",
+    "§D dsafsd\n",
+    "§D Please add ability to remove",
+    "§D [Replace this text]",
+    "§D [Replace this text]",
+    "§D This is some text",
+    "§D Testing the validity of the test",
+    "§D Lsdafkljsadlkf \nkasdféldaksé\n",
+    "§D ksadjflsadj",
+    "§D lksjdalfjdlsak",
+    "§CA (this is very interesting)",
+    "§CA (runs lika little shit)",
+    "§CA kasjfkldsa",
+    "§D Dialogue (or just",
+    "§I Instructions (or detail of a certain location)",
+    "§P Paragraph (describes a setting or an action)",
+    "§T Generic title",
+    "§ST Generic subtitle",
+    "§ST "
+  ],
+  "filetype": {
+    "version": "0.0.2",
+    "url": "https://github.com/the-duck/scripto/"
+  }
+}

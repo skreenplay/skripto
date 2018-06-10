@@ -5,6 +5,7 @@ import TextareaAutosize from 'react-autosize-textarea';
 import './App.css';
 import './scripto.css';
 
+import {Placeholder} from './components/basic';
 
 var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
@@ -14,12 +15,30 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      checked:true,
+      checked:false,
       file:null,
+      focusItem:null,
+      layoutState:"write",
+      fileSaved:true
     }
+
+    this.oldItem = null;
+
+    this.oldItemRef = element => {
+      this.oldItem = element;
+    };
+
+    this.focusItem = null;
+
+    this.focusItemRef = element => {
+      this.focusItem = element;
+    };
+
     this._onScriptUpdate = this._onScriptUpdate.bind(this);
     this._saveScript = this._saveScript.bind(this);
-    this._catchEnter = this._catchEnter.bind(this)
+    this._catchItemKeys = this._catchItemKeys.bind(this);
+    this._catchKeysDown = this._catchKeysDown.bind(this);
+    this._catchKeysUp = this._catchKeysUp.bind(this);
 
   }
   onLightMode(e) {
@@ -34,7 +53,6 @@ class Main extends Component {
     } else {
       console.log("no file");
     }
-
   }
 
   async componentDidMount(e) {
@@ -48,23 +66,68 @@ class Main extends Component {
         }
         scobj.loadData(data);
         var scrd = scobj.getScript();
+        console.log(scobj);
         self.setState({scripto:scobj, scriptData:scrd})
       });
     }
 
   }
 
-  _catchEnter(e, item) {
-    if (e.key === 'Enter'){
-      this.state.scripto.updateScriptItem(item);
-      console.log('saving', item.content);
-      this.setState({scriptData:this.state.scripto.getScript()});
+  _catchKeysDown(e) {
+    console.log('s');
+    if (e.key==="Meta") {
+      this.setState({commandKey:true})
+      console.log('l');
+    }
+  }
+  _catchKeysUp(e) {
+    if (e.key==="Meta") {
+      this.setState({commandKey:false})
     }
   }
 
+  _catchItemKeys(e, item) {
+    if (this.state.fileSaved) {
+      this.setState({fileSaved:false})
+    }
+    var newline = false;
+    var nextItemType = null;
+    if (e.key === 'Tab'){
+      newline = true;
+    } else if (e.key==='Backspace' && item.content===""){
+      console.log('removing');
+      this.state.scripto.removeScriptItem(item);
+      this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id-1});
+      this._saveScript();
+    } else if (e.key === "Enter") {
+      if (item.type === "§S" || item.type === "§C" || item.type === "§I") {
+        newline = true;
+      }
+    }
+
+    if (newline) {
+      console.log(item);
+      this.state.scripto.updateScriptItem(item);
+      this.state.scripto.addScriptItem(item.id, {type:item.type,content:'', id:item.id+1});
+      this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id+1});
+      this._saveScript();
+      if (this.focusItemRef) {
+        if (this.focusItem.textarea) {
+          this.focusItem.textarea.focus()
+        } else {
+          this.focusItem.focus()
+        }
+      }
+
+    }
+  }
   _onScriptUpdate(e,item) {
+    if (this.state.fileSaved) {
+      this.setState({fileSaved:false})
+    }
     var newitem = item;
     newitem.content = e.target.value;
+    //this.refs[item.id].defaultValue=newitem.content;
     this.state.scripto.updateScriptItem(newitem);
     /*this.setState({scriptData:this.state.scripto.getScript()});*/
   }
@@ -75,15 +138,19 @@ class Main extends Component {
         return console.log(err);
       }
     });
+    this.state.scripto.loadData(sc);
+    this.setState({fileSaved:true, scriptData:this.state.scripto.getScript()})
     console.log('saved');
   }
 
   render() {
 
+    console.log('updating render');
+
     if (this.state.checked) {
       var headerColor = "#202020";
       var contentColor = "#252525";
-      var borderColor = "#1D1B1A";
+      var borderColor = "#404040";
     } else {
       headerColor = "#E6DED2";
       contentColor = "#E1DAC9";
@@ -91,32 +158,48 @@ class Main extends Component {
     }
 
     if (this.state.scripto) {
+
+      var scriptMetadata = this.state.scripto.getMetaData();
       var scriptContent = this.state.scriptData.map((item) => {
+        if (item.id===this.state.focusItem) {
+          var reference = this.focusItemRef;
+        } else if (item.id===this.state.focusItem-1) {
+          var reference = this.oldItemRef;
+        } else {
+          reference = null;
+        }
         if (item.type==="§P" || item.type==="§D"){
           return (
+            <div className="Scripto-item-block" >
+            {item.id}{item.type}
             <TextareaAutosize className={"scripto input "+item.type}
+                      tabindex="-1"
                       type="text"
                       name="Paragraph"
                       defaultValue={item.content}
-                      key={item.id}
-                      ref={item.id}
+                      key={item.id.toString()+item.content.replace(" ", "-")}
+                      ref={reference}
                       onChange={(e)=>this._onScriptUpdate(e, item)}
-                      onKeyPress={(e)=>this._catchEnter(e, item)}>
+                      onKeyDown={(e)=>this._catchItemKeys(e, item)}>
                       </TextareaAutosize>
-
+            </div>
           )
 
         } else {
           return (
+            <div>
+            {item.id} {item.type}
             <input className={"scripto input "+item.type}
+                  tabindex="-1"
                   type="text"
                   name="Title"
                   defaultValue={item.content}
-                  key={item.id}
-                  ref={item.id}
+                  key={item.id.toString()+item.content.replace(" ", "-")}
+                  ref={reference}
                   onChange={(e)=>this._onScriptUpdate(e, item)}
-                  onKeyPress={(e)=>this._catchEnter(e, item)}>
+                  onKeyDown={(e)=>this._catchItemKeys(e, item)}>
                   </input>
+            </div>
           )
         }
 
@@ -124,14 +207,21 @@ class Main extends Component {
     } else {
       scriptContent = null;
     }
+
+    if (this.state.fileSaved) {
+      var saveState = "file saved"
+    } else {
+      saveState = "not saved"
+    }
+
     return (
 
-      <div className="App" >
+      <div className="App">
           <header className="App-header" style={{backgroundColor:headerColor, borderColor:borderColor}}>
             <div className="Layout-flex">
               <div className="Layout-left" style={{borderColor:borderColor}}></div>
               <div className="Layout-main">
-                <p className="App-title">Scripto {this.state.file}</p>
+                <p className="App-title">Skripto - {this.state.scripto && scriptMetadata.title}</p>
               </div>
             </div>
           </header>
@@ -139,6 +229,23 @@ class Main extends Component {
             <div className="Layout-flex">
               <div className="Layout-left" style={{borderColor:borderColor}}>
 
+                <div className="Global-layout" >
+                  <div className="Global-layout-choicebox" style={{borderColor:borderColor}}>
+                    <a className="Global-layout-choice info" ></a>
+                    <a className="Global-layout-choice write" ></a>
+                    <a className="Global-layout-choice info" ></a>
+                  </div>
+                  <div className="Global-layout-content">
+                    {
+                      this.state.layoutState==="write" && this.state.scripto &&
+
+                      <div>
+                        {scriptMetadata.title}
+
+                      </div>
+                    }
+                  </div>
+                </div>
               </div>
               <div className="Layout-main">
                 <div className="Script-layout">
@@ -149,40 +256,7 @@ class Main extends Component {
                         {
                           !scriptContent &&
 
-                          <div>
-                            <div className="Script-Placeholder title">
-
-                            </div>
-                            <div className="Script-Placeholder subtitle">
-
-                            </div>
-                            <div className="Script-Placeholder c-box"><div className="Script-Placeholder character"></div></div>
-                            <div className="Script-Placeholder paragraph">
-                              <div className="Script-Placeholder p-line-indent">
-                              </div>
-                              <div className="Script-Placeholder p-line">
-                              </div>
-                              <div className="Script-Placeholder p-line">
-                              </div>
-                              <div className="Script-Placeholder p-line">
-                              </div>
-                              <div className="Script-Placeholder p-line">
-                              </div>
-                            </div>
-                            <div className="Script-Placeholder c-box"><div className="Script-Placeholder character"></div></div>
-                            <div className="Script-Placeholder paragraph">
-                              <div className="Script-Placeholder p-line-indent">
-                              </div>
-                              <div className="Script-Placeholder p-line">
-                              </div>
-                              <div className="Script-Placeholder p-line">
-                              </div>
-                              <div className="Script-Placeholder p-line">
-                              </div>
-                              <div className="Script-Placeholder p-line">
-                              </div>
-                            </div>
-                          </div>
+                          <Placeholder />
 
                         }
                       </div>
@@ -205,8 +279,8 @@ class Main extends Component {
                       </a>
                     </div>
                     <div className="Script-Right-Button-Box">
-                        <a href="#" className="Script-Right-Button Primary" onClick={()=>this._saveScript()}>
-                          save script
+                        <a className="Script-Right-Button Primary" onClick={()=>this._saveScript()}>
+                          {saveState}
                         </a>
                     </div>
                   </div>
@@ -214,29 +288,28 @@ class Main extends Component {
               </div>
             </div>
           </div>
-          <script src="autosize.js">
-          </script>
-          <script>
-            autosize(document.querySelectorAll('textarea'));
-          </script>
       </div>
     );
   }
 }
 
-const App = () => (
-  <HashRouter>
-    <div>
-      <ul>
-        <li>
-          <Link to="/?file=0">Home</Link>
-        </li>
-      </ul>
+class App extends Component {
+    render() {
+      return (
+        <HashRouter>
+          <div>
+            <ul>
+              <li>
+                <Link to="/?file=0">Home</Link>
+              </li>
+            </ul>
 
-      <hr />
-      <Route path="/" component={Main} />
-    </div>
-  </HashRouter>
-);
+            <hr />
+            <Route path="/" component={Main} />
+          </div>
+        </HashRouter>
+      );
+    }
+}
 
 export default App;

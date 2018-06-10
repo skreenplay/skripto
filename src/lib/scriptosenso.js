@@ -88,7 +88,7 @@ function Scripto() {
 
   /* Get functions */
   this.getWholeData = function() {return this.data}
-  this.getMetaData = function () {return data.meta};
+  this.getMetaData = function () {return this.data.meta};
   this.getGlobalData = function () {return this.data.global;};
   this.getScriptRaw = function () {return this.data.script;};
   this.getScript = function () {return getScriptObjects(this.data.script)} // depeciated
@@ -111,6 +111,33 @@ function Scripto() {
   this.addScriptItem = function(position, item) {
     // position : id of the item that is placed __before__ the new item
     // TODO: add an item
+    // this.data.script.splice(position+1, 0, item.type+" "+item.content);
+
+    var items = this.getScript();
+    var itemsList = [];
+    var counter = 0
+    for (var i = 0; i < items.length; i++) {
+      itemsList.push(items[i].type+" "+items[i].content);
+      if (i===position){
+        itemsList.push(item.type+" "+item.content);
+      }
+    }
+    console.log(itemsList);
+    this.data.script = itemsList;
+    /*this.setScript(newitems);*/
+  }
+  this.removeScriptItem = function(item) {
+    var items = this.getScript();
+    var newitems = [];
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].id!==item.id){
+        newitems.push(items[i]);
+      } else {
+        console.log('removed', item);
+      }
+    }
+    console.log(newitems);
+    this.setScript(newitems);
   }
   this.updateScriptItem = function(item) {
     var items = this.getScript();

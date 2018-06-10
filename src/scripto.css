@@ -9,6 +9,7 @@
   border-bottom-width: .5pt;
   border-color: transparent;
   width:100%;
+  background: rgba(255,100,10,0.3)
 }
 .input:focus {
   border-width:0;
