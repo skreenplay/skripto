@@ -1,5 +1,5 @@
 {
-  "name": "scripto",
+  "name": "skripto",
   "main": "public/electron.js",
   "version": "0.1.1",
   "private": true,
@@ -10,7 +10,7 @@
     "react-autosize-textarea": "^3.0.3",
     "react-dom": "^16.4.0",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.1.4"
+    "react-scripts": "^1.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -25,15 +25,15 @@
     "electron-dist": "electron-builder"
   },
   "build": {
-    "productName": "Scripto",
-    "appId": "com.scripto.scripto",
+    "productName": "Skripto",
+    "appId": "com.skreenplay.skripto",
     "icon": "build/icon.icns",
     "mac": {
       "category": "public.app-category.utilities",
       "extendInfo": [
         {
           "CFBundleTypeExtensions": [
-            "scripto"
+            "skripto"
           ],
           "CFBundleTypeIconFile": "scriptofile.icns",
           "CFBundleTypeName": "Screenplay File",

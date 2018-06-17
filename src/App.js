@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {HashRouter, Route, Link } from "react-router-dom";
 import * as qs from 'query-string';
 import TextareaAutosize from 'react-autosize-textarea';
-import {remote, ipcRenderer} from 'electron';
 import './App.css';
 import './scripto.css';
 
@@ -11,6 +10,7 @@ import {Placeholder} from './components/basic';
 
 var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
+const {remote, ipcRenderer} = window.require('electron');
 
 
 class Main extends Component {
@@ -37,7 +37,7 @@ class Main extends Component {
     };
 
     ipcRenderer.on('file-save', (event, arg) => {
-      console.log(arg);
+      this._saveScript();
     })
 
     this._onScriptUpdate = this._onScriptUpdate.bind(this);
@@ -46,6 +46,7 @@ class Main extends Component {
     this._catchKeysDown = this._catchKeysDown.bind(this);
     this._catchKeysUp = this._catchKeysUp.bind(this);
   }
+
   onLightMode(e) {
     console.warn(e.currentTarget.checked);
     this.setState({checked:e.currentTarget.checked})
@@ -96,6 +97,7 @@ class Main extends Component {
       this.setState({fileSaved:false})
     }
     var newline = false;
+    var removeline = false;
     var nextItemType = null;
     if (e.key === 'Tab'){
       newline = true;
@@ -104,6 +106,7 @@ class Main extends Component {
       this.state.scripto.removeScriptItem(item);
       this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id-1});
       this._saveScript();
+      removeline=true;
     } else if (e.key === "Enter") {
       if (item.type === "§S" || item.type === "§C" || item.type === "§I") {
         newline = true;
@@ -116,14 +119,25 @@ class Main extends Component {
       this.state.scripto.addScriptItem(item.id, {type:item.type,content:'', id:item.id+1});
       this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id+1});
       this._saveScript();
-      if (this.focusItemRef) {
+      if (this.focusItemRef && this.focusItem) {
+        console.log('focusing');
         if (this.focusItem.textarea) {
           this.focusItem.textarea.focus()
         } else {
           this.focusItem.focus()
         }
       }
-
+    }
+    if (removeline) {
+      console.log('focusing 1');
+      if (this.focusItemRef && this.focusItem) {
+        console.log('focusing');
+        if (this.focusItem.textarea) {
+          this.focusItem.textarea.focus()
+        } else {
+          this.focusItem.focus()
+        }
+      }
     }
   }
   _onScriptUpdate(e,item) {
@@ -176,17 +190,16 @@ class Main extends Component {
         if (item.type==="§P" || item.type==="§D"){
           return (
             <div className="Scripto-item-block" >
-            {item.id}{item.type}
-            <TextareaAutosize className={"scripto input "+item.type}
-                      tabindex="-1"
-                      type="text"
-                      name="Paragraph"
-                      defaultValue={item.content}
-                      key={item.id.toString()+item.content.replace(" ", "-")}
-                      ref={reference}
-                      onChange={(e)=>this._onScriptUpdate(e, item)}
-                      onKeyDown={(e)=>this._catchItemKeys(e, item)}>
-                      </TextareaAutosize>
+              {item.id}{item.type}
+              <TextareaAutosize className={"scripto input "+item.type}
+                        type="text"
+                        name="Paragraph"
+                        defaultValue={item.content}
+                        key={item.id.toString()+item.content.replace(" ", "-")}
+                        ref={reference}
+                        onChange={(e)=>this._onScriptUpdate(e, item)}
+                        onKeyDown={(e)=>this._catchItemKeys(e, item)}>
+                        </TextareaAutosize>
             </div>
           )
 
@@ -195,7 +208,6 @@ class Main extends Component {
             <div>
             {item.id} {item.type}
             <input className={"scripto input "+item.type}
-                  tabindex="-1"
                   type="text"
                   name="Title"
                   defaultValue={item.content}
