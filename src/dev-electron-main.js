@@ -29,6 +29,18 @@ function createWindow () {
   })
 }
 
+
+function openFile(event, pa) {
+  openUrl = baseOpenUrl+"?file="+encodeURIComponent(pa);
+  //TODO : open multiple files
+  event.sender.send('file-save', 'pong');
+  if (mainWindow === null) {
+    createWindow()
+  }
+}
+
+app.on('open-file', openFile)
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.

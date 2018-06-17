@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, ipcMain} = require('electron');
 const pathlib = require('path');
 const url = require('url');
 
@@ -25,9 +25,10 @@ function createWindow () {
   })
 }
 
-function openFile(ev, pa) {
+function openFile(event, pa) {
   openUrl = baseOpenUrl+"?file="+encodeURIComponent(pa);
   //TODO : open multiple files
+  event.sender.send('file-save', 'pong');
   if (mainWindow === null) {
     createWindow()
   }

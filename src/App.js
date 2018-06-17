@@ -2,10 +2,12 @@ import React, { Component } from 'react';
 import {HashRouter, Route, Link } from "react-router-dom";
 import * as qs from 'query-string';
 import TextareaAutosize from 'react-autosize-textarea';
+import {remote, ipcRenderer} from 'electron';
 import './App.css';
 import './scripto.css';
 
 import {Placeholder} from './components/basic';
+
 
 var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
@@ -34,12 +36,15 @@ class Main extends Component {
       this.focusItem = element;
     };
 
+    ipcRenderer.on('file-save', (event, arg) => {
+      console.log(arg);
+    })
+
     this._onScriptUpdate = this._onScriptUpdate.bind(this);
     this._saveScript = this._saveScript.bind(this);
     this._catchItemKeys = this._catchItemKeys.bind(this);
     this._catchKeysDown = this._catchKeysDown.bind(this);
     this._catchKeysUp = this._catchKeysUp.bind(this);
-
   }
   onLightMode(e) {
     console.warn(e.currentTarget.checked);
