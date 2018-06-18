@@ -10,15 +10,18 @@ import {Placeholder} from './components/basic';
 
 var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
-const {remote, ipcRenderer} = window.require('electron');
+const {remote, ipcRenderer, dialog} = window.require('electron');
+const pathlib = window.require('path');
 
 
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      checked:false,
+      darkMode:false,
       file:null,
+      newfilePath:null,
+      newfileName:null,
       focusItem:null,
       layoutState:"write",
       fileSaved:true
@@ -36,23 +39,51 @@ class Main extends Component {
       this.focusItem = element;
     };
 
+    ipcRenderer.on('switch-darkmode', (event, arg) => {
+      console.log('o');
+      if (this.state.darkMode) {
+        this.setState({darkMode:false})
+      } else {
+        this.setState({darkMode:true})
+      }
+    })
+
     ipcRenderer.on('file-save', (event, arg) => {
       this._saveScript();
+    })
+    ipcRenderer.on('newfile-choose-reply', (event, arg) => {
+      this.setState({newfilePath:arg[0]})
+    })
+    ipcRenderer.on('openfile-choose-reply', (event, arg) => {
+      if (!this.state.file || !this.state.scripto) {
+        var scobj = new scripto.Skripto();
+        const self = this;
+        fs.readFile(arg[0], function read(err, data) {
+            if (err) {
+                throw err;
+            }
+            scobj.loadData(data);
+            var scrd = scobj.getScript();
+            self.setState({file:arg[0], scripto:scobj, scriptData:scrd})
+        });
+      } else {
+        /* if file is already open*/
+      }
     })
 
     this._onScriptUpdate = this._onScriptUpdate.bind(this);
     this._saveScript = this._saveScript.bind(this);
     this._catchItemKeys = this._catchItemKeys.bind(this);
-    this._catchKeysDown = this._catchKeysDown.bind(this);
-    this._catchKeysUp = this._catchKeysUp.bind(this);
+    this._createScriptChooseFileName = this._createScriptChooseFileName.bind(this);
   }
 
   onLightMode(e) {
     console.warn(e.currentTarget.checked);
-    this.setState({checked:e.currentTarget.checked})
+    this.setState({darkMode:e.currentTarget.checked})
   }
 
   componentWillMount() {
+    /* Get file input, if it exists*/
     if (qs.parse(this.props.location.search)) {
       var file = qs.parse(this.props.location.search).file;
       this.setState({file:file})
@@ -62,7 +93,8 @@ class Main extends Component {
   }
 
   async componentDidMount(e) {
-    var scobj = new scripto.Scripto();
+    /* Load file, if it exists*/
+    var scobj = new scripto.Skripto();
     const self = this;
 
     if (this.state.file) {
@@ -72,74 +104,48 @@ class Main extends Component {
         }
         scobj.loadData(data);
         var scrd = scobj.getScript();
-        console.log(scobj);
         self.setState({scripto:scobj, scriptData:scrd})
       });
     }
 
   }
 
-  _catchKeysDown(e) {
-    console.log('s');
-    if (e.key==="Meta") {
-      this.setState({commandKey:true})
-      console.log('l');
-    }
-  }
-  _catchKeysUp(e) {
-    if (e.key==="Meta") {
-      this.setState({commandKey:false})
+  componentDidUpdate() {
+    if (this.focusItem) {
+      if (this.focusItem.textarea) {
+        console.log('updating focus')
+        this.focusItem.textarea.focus()
+      } else {
+        this.focusItem.focus()
+      }
     }
   }
 
+  /* CATCH KEYBOARD BEFORE UPDATING - ADD/REMOVE LINE */
   _catchItemKeys(e, item) {
+
     if (this.state.fileSaved) {
       this.setState({fileSaved:false})
     }
-    var newline = false;
-    var removeline = false;
-    var nextItemType = null;
-    if (e.key === 'Tab'){
-      newline = true;
-    } else if (e.key==='Backspace' && item.content===""){
-      console.log('removing');
-      this.state.scripto.removeScriptItem(item);
-      this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id-1});
-      this._saveScript();
-      removeline=true;
-    } else if (e.key === "Enter") {
-      if (item.type === "§S" || item.type === "§C" || item.type === "§I") {
-        newline = true;
-      }
-    }
 
-    if (newline) {
-      console.log(item);
+    var nextItemType = null;
+    /*TODO : set specific item type for new item*/
+
+    if (e.key === 'Tab' || e.key==='Enter'){
+      /* CREATE NEW LINE */
+      e.preventDefault();
       this.state.scripto.updateScriptItem(item);
       this.state.scripto.addScriptItem(item.id, {type:item.type,content:'', id:item.id+1});
       this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id+1});
       this._saveScript();
-      if (this.focusItemRef && this.focusItem) {
-        console.log('focusing');
-        if (this.focusItem.textarea) {
-          this.focusItem.textarea.focus()
-        } else {
-          this.focusItem.focus()
-        }
-      }
-    }
-    if (removeline) {
-      console.log('focusing 1');
-      if (this.focusItemRef && this.focusItem) {
-        console.log('focusing');
-        if (this.focusItem.textarea) {
-          this.focusItem.textarea.focus()
-        } else {
-          this.focusItem.focus()
-        }
-      }
+    } else if (e.key==='Backspace' && item.content===""){
+      /* REMOVE CURRENT LINE */
+      this.state.scripto.removeScriptItem(item);
+      this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id-1});
+      this._saveScript();
     }
   }
+  /* UPDATE SCRIPT */
   _onScriptUpdate(e,item) {
     if (this.state.fileSaved) {
       this.setState({fileSaved:false})
@@ -150,23 +156,57 @@ class Main extends Component {
     this.state.scripto.updateScriptItem(newitem);
     /*this.setState({scriptData:this.state.scripto.getScript()});*/
   }
+  /* SAVE WHOLE SKRIPT TO FILE */
   _saveScript() {
-    var sc = this.state.scripto.getStringData();
-    fs.writeFile(this.state.file, sc, function(err){
-      if (err) {
-        return console.log(err);
-      }
-    });
-    this.state.scripto.loadData(sc);
-    this.setState({fileSaved:true, scriptData:this.state.scripto.getScript()})
+    if (this.state.scripto) {
+      var sc = this.state.scripto.getStringData();
+      fs.writeFile(this.state.file, sc, function(err){
+        if (err) {
+          return console.log(err);
+        }
+      });
+      this.state.scripto.loadData(sc);
+      this.setState({fileSaved:true, scriptData:this.state.scripto.getScript()})
+    } else {
+      console.log('Error : no script data');
+    }
     console.log('saved');
   }
 
+  /* SEND EVENT TO ELECTRON TO CHOOSE FILE*/
+  _createScriptChooseFileName(){
+      ipcRenderer.send('newfile-choose', null)
+  }
+  /* SET FILE NAME */
+  _createScriptChangeTitle(e) {
+    this.setState({newfileName:e.target.value})
+  }
+  /* SAVE FIRST INSTANCE OF FILE - NOTHING IN IT BUT IT'S CREATED*/
+  _createScriptSaveFile(){
+    if (this.state.newfilePath && this.state.newfileName){
+      /* TODO : maybe replace spaces in filename? or prevent this in input tag*/
+      var wholepath = pathlib.join(this.state.newfilePath, this.state.newfileName.toString()+'.skripto');
+      var sko = new scripto.Skripto();
+      sko.loadSkeletonData();
+      var baseScriptData = [
+        {type:'§S', content:"", id:0}
+      ]
+      sko.setScript(baseScriptData);
+      this.setState({file:wholepath.toString(), scripto: sko , scriptData:baseScriptData});
+      fs.writeFile(wholepath, "", function(err){
+        if (err) {
+          return console.log(err);
+        }
+      });
+    }
+  }
+  /* SEND EVENT TO ELECTRON TO CHOOSE FILE TO OPEN*/
+  _openScriptChooseFile(){
+    ipcRenderer.send('openfile-choose', null)
+  }
+
   render() {
-
-    console.log('updating render');
-
-    if (this.state.checked) {
+    if (this.state.darkMode) {
       var headerColor = "#202020";
       var contentColor = "#252525";
       var borderColor = "#404040";
@@ -181,42 +221,51 @@ class Main extends Component {
       var scriptMetadata = this.state.scripto.getMetaData();
       var scriptContent = this.state.scriptData.map((item) => {
         if (item.id===this.state.focusItem) {
+          console.log('focused : ', item.id);
           var reference = this.focusItemRef;
-        } else if (item.id===this.state.focusItem-1) {
-          var reference = this.oldItemRef;
         } else {
           reference = null;
         }
         if (item.type==="§P" || item.type==="§D"){
           return (
-            <div className="Scripto-item-block" >
-              {item.id}{item.type}
-              <TextareaAutosize className={"scripto input "+item.type}
-                        type="text"
-                        name="Paragraph"
-                        defaultValue={item.content}
-                        key={item.id.toString()+item.content.replace(" ", "-")}
-                        ref={reference}
-                        onChange={(e)=>this._onScriptUpdate(e, item)}
-                        onKeyDown={(e)=>this._catchItemKeys(e, item)}>
-                        </TextareaAutosize>
+            <div className="Script-layout">
+
+              <div className="Script-main" >
+                <span className="debug-info">{item.id} {item.type}</span>
+                <TextareaAutosize className={"scripto input "+item.type}
+                          type="text"
+                          name="Paragraph"
+                          defaultValue={item.content}
+                          key={item.id.toString()+item.content.replace(" ", "-")}
+                          ref={reference}
+                          onChange={(e)=>this._onScriptUpdate(e, item)}
+                          onKeyDown={(e)=>this._catchItemKeys(e, item)}
+                          >
+                          </TextareaAutosize>
+              </div>
+              <div className="Script-Right">
+              </div>
             </div>
           )
 
         } else {
           return (
-            <div>
-            {item.id} {item.type}
-            <input className={"scripto input "+item.type}
-                  type="text"
-                  name="Title"
-                  defaultValue={item.content}
-                  key={item.id.toString()+item.content.replace(" ", "-")}
-                  ref={reference}
-                  onChange={(e)=>this._onScriptUpdate(e, item)}
-                  onKeyDown={(e)=>this._catchItemKeys(e, item)}>
-                  </input>
-            </div>
+            <div className="Script-layout">
+              <div className="Script-main">
+                <span className="debug-info">{item.id} {item.type}</span>
+                <input className={"scripto input "+item.type}
+                      type="text"
+                      name="Title"
+                      defaultValue={item.content}
+                      key={item.id.toString()+item.content.replace(" ", "-")}
+                      ref={reference}
+                      onChange={(e)=>this._onScriptUpdate(e, item)}
+                      onKeyDown={(e)=>this._catchItemKeys(e, item)}>
+                      </input>
+              </div>
+              <div className="Script-Right">
+              </div>
+          </div>
           )
         }
 
@@ -239,6 +288,12 @@ class Main extends Component {
               <div className="Layout-left" style={{borderColor:borderColor}}></div>
               <div className="Layout-main">
                 <p className="App-title">Skripto - {this.state.scripto && scriptMetadata.title}</p>
+                <p className="Script-Right-Label">Dark</p>
+
+                <label className="switch">
+                  <input type="checkbox" onChange={(e) => this.onLightMode(e) } checked={this.state.darkMode}/>
+                  <span className="slider round"></span>
+                </label>
               </div>
             </div>
           </header>
@@ -265,43 +320,35 @@ class Main extends Component {
                 </div>
               </div>
               <div className="Layout-main">
-                <div className="Script-layout">
-                  <div className="Script-main">
-                      <div className="Script-Placeholder-box">
-                        {scriptContent}
+                <div className="Whole-Script">
+                  {scriptContent}
 
-                        {
-                          !scriptContent &&
+                  {
+                    !scriptContent && this.state.file &&
 
-                          <Placeholder />
+                    <Placeholder />
 
-                        }
+                  }
+
+                  {
+                    !scriptContent && !this.state.file &&
+
+                    <div className="CreateFile-Layout">
+                      <div className="CreateFile-Container">
+                        <h2>
+                          Create new project
+                        </h2>
+                        <button onClick={()=>this._createScriptChooseFileName()}>file directory</button>
+                        <input onChange={(e)=>this._createScriptChangeTitle(e)} />
+                        <button onClick={()=>this._createScriptSaveFile()}>Save file</button>
+                        <button onClick={()=>this._openScriptChooseFile()}>Open file</button>
+
                       </div>
-                  </div>
-                  <div className="Script-Right">
-                    <div className="Script-Right-Button-Box">
-                      <p className="Script-Right-Label">Dark</p>
-                      <label className="switch">
-                        <input type="checkbox" onChange={(e) => this.onLightMode(e) } checked={this.state.checked}/>
-                        <span className="slider round"></span>
-                      </label>
                     </div>
-                    <div className="Script-Right-Button-Box">
-                    </div>
-                    <div className="Script-Right-Spacer">
-                    </div>
-                    <div className="Script-Right-Button-Box">
-                      <a className="Script-Right-Button">
-                        Export to PDF
-                      </a>
-                    </div>
-                    <div className="Script-Right-Button-Box">
-                        <a className="Script-Right-Button Primary" onClick={()=>this._saveScript()}>
-                          {saveState}
-                        </a>
-                    </div>
-                  </div>
+
+                  }
                 </div>
+
               </div>
             </div>
           </div>

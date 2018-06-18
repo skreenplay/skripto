@@ -1,3 +1,9 @@
+.debug-info {
+  font-weight: normal;
+  font-size: 7pt;
+  color:#7e7e7e;
+}
+
 .scripto {
   font-family: "Liberation Mono";
   background-color:transparent;
@@ -9,7 +15,6 @@
   border-bottom-width: .5pt;
   border-color: transparent;
   width:100%;
-  background: rgba(255,100,10,0.3)
 }
 .input:focus {
   border-width:0;

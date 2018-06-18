@@ -1,4 +1,4 @@
-const {app, BrowserWindow, globalShortcut, Menu} = require('electron')
+const {app, BrowserWindow, globalShortcut, Menu, dialog, ipcMain} = require('electron')
 
 /* GLOBAL VALUES */
 let mainWindow
@@ -6,7 +6,7 @@ let mainWindow
 /* FUNCTIONS */
 function createWindow () {
   /* CREATE WINDOW */
-  mainWindow = new BrowserWindow({width: 938, height: 600, titleBarStyle: 'hiddenInset'})
+  mainWindow = new BrowserWindow({width: 1048, height: 600, titleBarStyle: 'hiddenInset'})
   const startUrl = process.env.ELECTRON_START_URL || url.format({
             pathname: path.join(__dirname, '/../build/index.html'),
             protocol: 'file:',
@@ -39,6 +39,7 @@ function createWindow () {
           {
             role:'save',
             label:'Save file',
+            accelerator:'CommandOrControl+S',
             click() {
               mainWindow.webContents.send('file-save')
             }
@@ -51,6 +52,7 @@ function createWindow () {
           {
             role:'switch-darkmode',
             label:'Switch to Dark/Light mode',
+            accelerator:'CommandOrControl+L',
             click() {
               mainWindow.webContents.send('switch-darkmode')
             }
@@ -61,10 +63,29 @@ function createWindow () {
   Menu.setApplicationMenu(menu);
   mainWindow.setMenu(menu);
 
+
   /* WINDOW EVENTS */
   mainWindow.on('closed', function () {
     mainWindow = null
   })
+
+  /* RENDERER EVENTS */
+  ipcMain.on('newfile-choose', (event, arg) => {
+    dialog.showOpenDialog({properties: ['openDirectory']}, (fp, bm) => {
+      console.log(fp[0]);
+      mainWindow.webContents.send('newfile-choose-reply', fp)
+    });
+    event.returnValue = 'pong';
+  })
+  ipcMain.on('openfile-choose', (event, arg) => {
+    dialog.showOpenDialog({properties: ['openFile']}, (fp, bm) => {
+      console.log(fp[0]);
+      mainWindow.webContents.send('openfile-choose-reply', fp)
+    });
+    event.returnValue = 'pong';
+  })
+
+
 }
 
 function openFile(event, pa) {

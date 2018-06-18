@@ -3,8 +3,8 @@
 
 var dataSkeleton = {
   filetype: {
-    version:"0.0.2",
-    url:"https://github.com/the-duck/scripto/"
+    version:"0.0.4å",
+    url:"https://github.com/skreenplay/skripto"
   },
   meta: {
     title:"",
@@ -36,6 +36,7 @@ function dataToString(data) {
 
 function getScriptObjects(scriptArray) {
   var ScriptData = [];
+  var lastObjectType = "";
   var counter = 0;
   for (var i = 0; i < scriptArray.length; i++) {
     var scriptLine = scriptArray[i];
@@ -65,21 +66,24 @@ function getScriptObjects(scriptArray) {
   return ScriptData;
 
 }
-function setScriptFromObjects(scriptObjects){
+function setScriptFromObjects(Skriptobjects){
   var scriptList = [];
-  for (var i = 0; i < scriptObjects.length; i++) {
-    var scriptObject = scriptObjects[i];
-    var scriptString = scriptObject.type+" "+scriptObject.content;
+  for (var i = 0; i < Skriptobjects.length; i++) {
+    var Skriptobject = Skriptobjects[i];
+    var scriptString = Skriptobject.type+" "+Skriptobject.content;
     scriptList.push(scriptString);
   }
   return scriptList;
 }
 
-function Scripto() {
+function Skripto() {
   var data = dataSkeleton;
   /* Input and output */
   this.loadData = function(stringData) {
     this.data = formatData(stringData);
+  };
+  this.loadSkeletonData = function() {
+    this.data = data;
   };
   this.getStringData = function () {
     //TODO update this.data.script
@@ -122,7 +126,6 @@ function Scripto() {
         itemsList.push(item.type+" "+item.content);
       }
     }
-    console.log(itemsList);
     this.data.script = itemsList;
     /*this.setScript(newitems);*/
   }
@@ -136,25 +139,24 @@ function Scripto() {
         console.log('removed', item);
       }
     }
-    console.log(newitems);
     this.setScript(newitems);
   }
   this.updateScriptItem = function(item) {
     var items = this.getScript();
     for (var i = 0; i < items.length; i++) {
-      if (items[i].id===item.id){
+      if (items[i].id==item.id){
         items[i].content = item.content;
       }
     }
     this.setScript(items);
   }
 }
-/*Scripto.prototype.getScript = function () {
+/*Skripto.prototype.getScript = function () {
   var d = this.data;
   var sc = getScriptObjects(d);
   return sc;
 }*/
 
 module.exports = {
-  Scripto: Scripto
+  Skripto: Skripto
 }

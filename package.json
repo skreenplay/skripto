@@ -35,7 +35,7 @@
           "CFBundleTypeExtensions": [
             "skripto"
           ],
-          "CFBundleTypeIconFile": "scriptofile.icns",
+          "CFBundleTypeIconFile": "skriptofile.icns",
           "CFBundleTypeName": "Screenplay File",
           "CFBundleTypeRole": "Editor",
           "LSHandlerRank": "Alternate"

@@ -70,6 +70,7 @@
   flex-direction: row;
   align-items: stretch;
   flex:1;
+  overflow: hidden;
 }
 .Layout-left {
   flex-basis:196pt;
@@ -88,6 +89,7 @@
   display: flex;
   flex:1;
   flex-direction: row;
+  position: relative;
 }
 
 
@@ -135,6 +137,17 @@
 
 /* Specific Values */
 
+.Whole-Script {
+  display: block;
+  position: absolute;
+  left:0;
+  right:0;
+  top:0;
+  bottom:2pt;;
+  padding:6pt;
+  padding-bottom:96pt;
+  overflow-y:auto;;
+}
 
 .Script-layout {
   display: flex;
@@ -247,4 +260,21 @@
 }
 .Script-Placeholder.character {
   width:64pt;
+}
+
+.CreateFile-Layout {
+  background:gray;
+  display: flex;
+  height:100%;
+  align-items: center;
+}
+.CreateFile-Container {
+  background:white;
+  width: 372pt;
+  height:256pt;
+  margin:0 auto;
+}
+.CreateFile-Container h2 {
+  text-align: center;
+  color:#7e7e7e
 }
