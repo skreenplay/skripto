@@ -134,6 +134,69 @@
 .Global-layout-content {
   color: #7e7e7e
 }
+.Settings-layout {
+  flex-basis: 96pt;
+  opacity: .1;
+  transition: opacity .2s;
+  border-style: solid;
+  border-width: 0pt;
+  border-top-width: 0.5pt;
+  border-color: #7e7e7e;
+  display: flex;
+  flex-direction: row;
+}
+.Settings-layout:hover {
+  opacity: 1;
+}
+.Settings-Settings {
+  flex-basis: 32pt;
+  border-style: solid;
+  border-width: 0pt;
+  border-right-width: 0.5pt;
+  border-color: #7e7e7e;
+}
+.Settings-IO {
+  flex:1;
+  display: flex;
+  flex-direction: column;
+}
+.Settings-IO .Row {
+  flex:1;
+}
+
+.Settings-saveFile {
+  border-style: solid;
+  border-width: 0.5pt;
+  border-radius: 1.5pt;
+  font-family: "Liberation Mono", sans-serif;
+  font-size: 11pt;
+  padding:6pt;
+  margin:6pt;
+  height:32pt;
+  line-height: 32pt;
+  outline: none;
+  cursor: pointer;
+  border-color:#7e7e7e;
+  color: rgb(40,175,90);
+  text-align: center;
+}
+.Settings-saveFileDisabled {
+  border-style: solid;
+  border-width: 0.5pt;
+  border-radius: 1.5pt;
+  font-family: "Liberation Mono", sans-serif;
+  font-size: 11pt;
+  font-weight: lighter;
+  padding:6pt;
+  margin:6pt;
+  height:32pt;
+  line-height: 32pt;
+  outline: none;
+  cursor: pointer;
+  border-color:#7e7e7e;
+  color:#7e7e7e;
+  text-align: center;
+}
 
 /* Specific Values */
 
@@ -162,7 +225,7 @@
   flex-shrink: 0;
   background:;
   overflow: auto;
-  min-width: 480pt;
+  min-width: 400pt;
 }
 .Script-Right {
   min-width: 96pt;
@@ -263,18 +326,230 @@
 }
 
 .CreateFile-Layout {
-  background:gray;
   display: flex;
   height:100%;
   align-items: center;
 }
 .CreateFile-Container {
-  background:white;
   width: 372pt;
   height:256pt;
   margin:0 auto;
+  display: flex;
+  flex:0;
+  flex-basis:372pt;
+  align-items: stretch;
+  flex-direction: column;
+  border-style: solid;
+  border-width: 0.5pt;
+  border-radius: 1.5pt;
+  border-color:#7e7e7e;
 }
-.CreateFile-Container h2 {
+.CreateFile-Row {
+  flex:1;
+  display: flex;
+  flex-direction:row;
+  border-style: solid;
+  border-width: 0pt;
+  border-bottom-width: 0.5pt !important;
+  border-color:#7e7e7e;
+}
+.CreateFile-Column {
+  flex:1;
+  flex-direction:column;
+  max-width: 186pt;
+}
+.CreateFile-Column.Title {
+  max-width:372pt;
+}
+.CreateFile-Row.Header {
+  flex:0;
+  flex-basis: 48pt;
+}
+.CreateFile-HeaderTitle {
+  color:#7e7e7e;
+  font-weight: lighter;
+  font-size: 12pt;
   text-align: center;
-  color:#7e7e7e
+  line-height: 48pt;
+  padding:0pt;
+  margin:0pt;
 }
+.CreateFile-title {
+  text-align: right;
+  border-style: solid;
+  border-width: 0pt;
+  border-right-width: 0.5pt !important;
+  border-color:#7e7e7e;
+  color:#7e7e7e;
+  font-weight: normal;
+  font-size: 10pt;
+  padding:0pt;
+  margin:0pt;
+  padding-top:8pt;
+  padding-right: 6pt;
+}
+.CreateFile-Row.Open {
+  flex:0;
+  flex-basis: 68pt;
+  border-width: 0pt !important;
+}
+
+.CreateFile-filePath {
+  background:transparent;
+  color:#7e7e7e;
+  font-family: "Liberation Mono", sans-serif;
+  padding:0pt;
+  margin:6pt;
+  margin-top:9pt;
+  font-size: 10pt;
+  width:calc(100% - 12pt);
+  overflow-x:auto;
+}
+.CreateFile-fileButton {
+  background:transparent;
+  border-style: solid;
+  border-width: 0.5pt;
+  border-radius: 1.5pt;
+  border-color:#7e7e7e;
+  color:#7e7e7e;
+  font-family: "Liberation Mono", sans-serif;
+  width: auto;
+  padding:6pt;
+  margin:6pt;
+  cursor: pointer;
+  outline: none;
+}
+.CreateFile-filenameInput {
+  background-color:rgb(220,220,220);
+  border-style: solid;
+  border-width: 0.5pt;
+  border-radius: 1.5pt;
+  border-color:#7e7e7e;
+  color:#7e7e7e;
+  font-family: "Liberation Mono", sans-serif;
+  width:calc(100% - 26pt);
+  padding:6pt;
+  margin:6pt;
+  outline: none;
+  cursor: pointer;
+}
+::-webkit-input-placeholder {
+  color:rgb(190,190,190)
+}
+.CreateFile-filenameInput:focus {
+  background:rgb(240,240,240);
+}
+.CreateFile-save {
+  border-style: solid;
+  border-width: 0.5pt;
+  border-radius: 1.5pt;
+  font-family: "Liberation Mono", sans-serif;
+  font-size: 12pt;
+  width:calc(100% - 12pt);
+  padding:6pt;
+  margin:6pt;
+  outline: none;
+  cursor: pointer;
+  border-color:#7e7e7e;
+  color:#e7e7e7;
+  background: rgb(40,175,90)
+}
+.CreateFile-save.disabled {
+  opacity: 0.4;
+  background: rgba(80,80,80,0.1);
+  border-color:#7e7e7e;
+  color:#7e7e7e;
+  cursor: normal;
+}
+
+.CreateFile-openFile {
+  border-style: solid;
+  border-width: 0.5pt;
+  border-radius: 1.5pt;
+  font-family: "Liberation Mono", sans-serif;
+  font-size: 10pt;
+  width:calc(100% - 12pt);
+  height:56pt;
+  padding:6pt;
+  margin:6pt;
+  outline: none;
+  cursor: pointer;
+  border-color:#7a7a7a;
+  color: rgb(40,175,90);
+  background: transparent;
+}
+
+
+/* Control Activity */
+.Control-Metadata {
+  margin:6pt;
+  border-style: solid;
+  border-width: 0.5pt;
+  border-color: #7e7e7e;
+  border-radius: 0.5pt;
+  display: flex;
+  flex-direction: row;
+}
+.Control-title {
+  flex-basis: 128pt;
+}
+.Control-title h2 {
+  font-weight: lighter;
+  font-size: 11pt;
+  margin:0pt;
+  padding: 6pt;
+  text-align: right;
+  color:#7e7e7e;
+  border-style: solid;
+  border-width: 0pt;
+  border-right-width: 0.5pt;
+  border-color: #7e7e7e;
+  border-radius: 0.5pt;
+
+}
+.Control-inputs {
+  display: flex;
+  flex-direction: column;
+  flex:1;
+}
+.Control-Input {
+  padding:6pt;
+  flex:1;
+  display: flex;
+  flex-direction: row;
+}
+.Control-Input p {
+  padding-right:6pt;
+  margin:0pt;
+  flex-basis: 96pt;
+  font-size: 10pt;
+  line-height: 18pt;
+  text-align: right;
+
+}
+.Control-Input input, .Control-Input textarea {
+  padding:12pt;
+  padding-left:6pt;
+  margin:0pt;
+  flex:1;
+  background-color:rgb(220,220,220);
+  border-style: solid;
+  border-width: 0.5pt;
+  border-radius: 1.5pt;
+  border-color:#7e7e7e;
+  color:#7e7e7e;
+  font-size: 12pt;
+  font-family: "Liberation Mono", sans-serif;
+  outline: none;
+  cursor: pointer;
+}
+ .Control-Input.Synopsis {
+   flex-basis: 50pt;
+ }
+ .Control-Input textarea  {
+   font-size:11pt;
+   outline: none;
+   resize: none;
+   max-height: 64pt;
+   padding: 6pt;
+ }

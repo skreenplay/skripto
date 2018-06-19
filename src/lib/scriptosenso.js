@@ -99,8 +99,9 @@ function Skripto() {
   this.getScriptObjects = function () {return getScriptObjects(this.data.script)}
 
   /* Set functions*/
-  this.setMetaData = function () {
+  this.setMetaData = function (metadata) {
     //TODO update this.data.meta
+    this.data.meta = metadata;
     return this.data.meta
   };
   this.setGlobalData = function () {

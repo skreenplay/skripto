@@ -64,7 +64,7 @@ function createWindow () {
   ]);
   Menu.setApplicationMenu(menu);
   mainWindow.setMenu(menu);
-  
+
   /* WINDON EVENTS */
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
@@ -75,16 +75,24 @@ function createWindow () {
 
   /* RENDERER EVENTS */
   ipcMain.on('newfile-choose', (event, arg) => {
-    dialog.showOpenDialog({properties: ['openDirectory']}, (fp, bm) => {
-      console.log(fp[0]);
-      mainWindow.webContents.send('newfile-choose-reply', fp)
-    });
+      dialog.showOpenDialog({properties: ['openDirectory']}, (fp, bm) => {
+        try {
+          console.log(fp[0]);
+          mainWindow.webContents.send('newfile-choose-reply', fp)
+        } catch(e) {
+
+        }
+      });
     event.returnValue = 'pong';
   })
   ipcMain.on('openfile-choose', (event, arg) => {
     dialog.showOpenDialog({properties: ['openFile']}, (fp, bm) => {
-      console.log(fp[0]);
-      mainWindow.webContents.send('openfile-choose-reply', fp)
+      try {
+        console.log(fp[0]);
+        mainWindow.webContents.send('openfile-choose-reply', fp)
+      } catch(e) {
+
+      }
     });
     event.returnValue = 'pong';
   })

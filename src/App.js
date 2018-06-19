@@ -6,7 +6,7 @@ import './App.css';
 import './scripto.css';
 
 import {Placeholder} from './components/basic';
-
+import ControlActivity from './activities/ControlActivity';
 
 var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
@@ -20,6 +20,7 @@ class Main extends Component {
     this.state = {
       darkMode:false,
       file:null,
+      activity:'write',
       newfilePath:null,
       newfileName:null,
       focusItem:null,
@@ -78,7 +79,6 @@ class Main extends Component {
   }
 
   onLightMode(e) {
-    console.warn(e.currentTarget.checked);
     this.setState({darkMode:e.currentTarget.checked})
   }
 
@@ -86,7 +86,8 @@ class Main extends Component {
     /* Get file input, if it exists*/
     if (qs.parse(this.props.location.search)) {
       var file = qs.parse(this.props.location.search).file;
-      this.setState({file:file})
+      var activity = qs.parse(this.props.location.search).activity || 'write';
+      this.setState({file:file, activity:activity})
     } else {
       console.log("no file");
     }
@@ -140,6 +141,7 @@ class Main extends Component {
       this._saveScript();
     } else if (e.key==='Backspace' && item.content===""){
       /* REMOVE CURRENT LINE */
+      e.preventDefault();
       this.state.scripto.removeScriptItem(item);
       this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id-1});
       this._saveScript();
@@ -192,7 +194,7 @@ class Main extends Component {
         {type:'§S', content:"", id:0}
       ]
       sko.setScript(baseScriptData);
-      this.setState({file:wholepath.toString(), scripto: sko , scriptData:baseScriptData});
+      this.setState({file:wholepath.toString(), scripto: sko , scriptData:baseScriptData, activity:'control'});
       fs.writeFile(wholepath, "", function(err){
         if (err) {
           return console.log(err);
@@ -204,6 +206,12 @@ class Main extends Component {
   _openScriptChooseFile(){
     ipcRenderer.send('openfile-choose', null)
   }
+
+  /* Change Activity */
+  _changeActivity(act) {
+    this.setState({activity:act})
+  }
+
 
   render() {
     if (this.state.darkMode) {
@@ -280,6 +288,12 @@ class Main extends Component {
       saveState = "not saved"
     }
 
+    if (this.state.newfileName && this.state.newfilePath) {
+      var canCreate = <button className="CreateFile-save" onClick={()=> {this._createScriptSaveFile()}}>Create file</button>
+    } else {
+      canCreate = <button className="CreateFile-save disabled">Create file</button>
+    }
+
     return (
 
       <div className="App">
@@ -303,13 +317,13 @@ class Main extends Component {
 
                 <div className="Global-layout" >
                   <div className="Global-layout-choicebox" style={{borderColor:borderColor}}>
-                    <a className="Global-layout-choice info" ></a>
-                    <a className="Global-layout-choice write" ></a>
+                    <a className="Global-layout-choice info" onClick={()=>{this._changeActivity('control')}} ></a>
+                    <a className="Global-layout-choice write" onClick={()=>{this._changeActivity('write')}} ></a>
                     <a className="Global-layout-choice info" ></a>
                   </div>
                   <div className="Global-layout-content">
                     {
-                      this.state.layoutState==="write" && this.state.scripto &&
+                      this.state.activity==="write" && this.state.scripto &&
 
                       <div>
                         {scriptMetadata.title}
@@ -318,8 +332,28 @@ class Main extends Component {
                     }
                   </div>
                 </div>
+                <div className="Settings-layout" style={{borderColor:borderColor}}>
+                  <div className="Settings-Settings"  style={{borderColor:borderColor}}></div>
+                  <div className="Settings-IO">
+                    <div className="Row">
+                      <div className="Settings-saveFileDisabled">[export]</div>
+                    </div>
+                    <div className="Row">
+                      {(() => {
+                        switch (this.state.fileSaved) {
+                          case true:return (<div className="Settings-saveFileDisabled">file saved</div>); break;
+                          case false:return (<div className="Settings-saveFile" onClick={()=>{this._saveScript()}}>Save file</div>);break;
+
+                        }
+                      })()}
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="Layout-main">
+                {
+                  this.state.activity==="write" &&
+
                 <div className="Whole-Script">
                   {scriptContent}
 
@@ -335,20 +369,60 @@ class Main extends Component {
 
                     <div className="CreateFile-Layout">
                       <div className="CreateFile-Container">
-                        <h2>
-                          Create new project
-                        </h2>
-                        <button onClick={()=>this._createScriptChooseFileName()}>file directory</button>
-                        <input onChange={(e)=>this._createScriptChangeTitle(e)} />
-                        <button onClick={()=>this._createScriptSaveFile()}>Save file</button>
-                        <button onClick={()=>this._openScriptChooseFile()}>Open file</button>
+                          <div className="CreateFile-Row Header">
+                            <div className="CreateFile-Column Title">
+                              <h2 className="CreateFile-HeaderTitle">
+                                Welcome to Skripto
+                              </h2>
+                            </div>
+                          </div>
+                          <div className="CreateFile-Row">
+                            <div className="CreateFile-Column">
+                              <h3 className="CreateFile-title">
+                                Create new Project
+                              </h3>
+                            </div>
+                            <div className="CreateFile-Column">
 
+                                { this.state.newfilePath &&
+                                  <div>
+                                    <p className="CreateFile-filePath">{this.state.newfilePath}</p>
+                                    <button className="CreateFile-fileButton" onClick={()=>this._createScriptChooseFileName()}>1. Choose another folder</button>
+                                  </div>
+                                }
+                                { !this.state.newfilePath &&
+                                  <div>
+                                    <button className="CreateFile-fileButton" onClick={()=>this._createScriptChooseFileName()}>1. Choose a folder</button>
+                                  </div>
+                                }
+                              <input className="CreateFile-filenameInput" onChange={(e)=>this._createScriptChangeTitle(e)} placeholder="2. What's your project's name?" />
+
+                              {canCreate}
+                            </div>
+                          </div>
+                          <div className="CreateFile-Row Open">
+                            <div className="CreateFile-Column">
+                              <h3 className="CreateFile-title">
+                                Open Project
+                              </h3>
+                            </div>
+                            <div className="CreateFile-Column">
+                              <button className="CreateFile-openFile" onClick={()=>this._openScriptChooseFile()}>Open file</button>
+                            </div>
+
+                          </div>
                       </div>
                     </div>
-
                   }
                 </div>
+              }
+              {
+                this.state.activity==='control' &&
 
+                  <div className="Whole-Script">
+                    <ControlActivity scripto={this.state.scripto}/>
+                  </div>
+              }
               </div>
             </div>
           </div>

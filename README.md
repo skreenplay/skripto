@@ -30,3 +30,11 @@ Check out the [file.skripto](https://github.com/skreenplay/file.skripto) repo to
     npm run electron-dist
 
     ```
+
+
+## Tasks to achieve a workable desktop app :
+
+* Config file storing user-set UI data, or general settings.
+* Refine script writing ui (fatal bugs)
+* Add complete list of script items
+* Export to PDF & Word documents & eventually .fountain

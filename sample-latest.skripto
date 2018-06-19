@@ -27,22 +27,19 @@
     "§S This is a scene",
     "§C Character",
     "§D First item",
-    "§D Second dialog",
-    "§D Helllksdf",
-    "§D jkljdslk\njlksjldkfls\nlkasdjfkldas",
     "§D Polo",
     "§D Hi, this is dialo",
     "§D sdfsdf\nsd",
     "§D This is some text",
     "§D Testing the validity of the test",
-    "§D ksadjflsadj",
+    "§D léé",
     "§CA (this is very interestin",
     "§P Paragraph (describes a setting or an action)\nkljsalfjlas\nlkdjsalkfjlasd\nkkasdlkflk",
     "§P klkasjlkf",
     "§P Hi, this is a paragraph. One difference being that if you press enter, it will change to a new item"
   ],
   "filetype": {
-    "version": "0.0.2",
-    "url": "https://github.com/the-duck/scripto/"
+    "version": "0.0.4",
+    "url": "https://github.com/skreenplay/skripto"
   }
 }
