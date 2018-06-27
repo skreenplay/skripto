@@ -3,10 +3,16 @@ import {HashRouter, Route, Link } from "react-router-dom";
 import * as qs from 'query-string';
 import TextareaAutosize from 'react-autosize-textarea';
 import './App.css';
-import './scripto.css';
+import './styles/ui.css';
+import './styles/skripto.css';
 
 import {Placeholder} from './components/basic';
+import TreeView from './components/TreeView';
+
+import WelcomeActivity from './activities/WelcomeActivity';
 import ControlActivity from './activities/ControlActivity';
+import ScriptActivity from './activities/ScriptActivity';
+
 
 var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
@@ -15,24 +21,18 @@ const pathlib = window.require('path');
 
 
 class Main extends Component {
+  /* GLOBAL STUFF */
   constructor(props) {
     super(props);
     this.state = {
-      darkMode:false,
+      lightMode:false,
       file:null,
       activity:'write',
       newfilePath:null,
       newfileName:null,
-      focusItem:null,
       layoutState:"write",
       fileSaved:true
     }
-
-    this.oldItem = null;
-
-    this.oldItemRef = element => {
-      this.oldItem = element;
-    };
 
     this.focusItem = null;
 
@@ -40,21 +40,19 @@ class Main extends Component {
       this.focusItem = element;
     };
 
-    ipcRenderer.on('switch-darkmode', (event, arg) => {
+    /* EVENTS SENT FROM ELECTRON */
+    ipcRenderer.on('config-ui-lightmode', (event, arg) => {
       console.log('o');
-      if (this.state.darkMode) {
-        this.setState({darkMode:false})
+      if (this.state.lightMode) {
+        this.setState({lightMode:false})
       } else {
-        this.setState({darkMode:true})
+        this.setState({lightMode:true})
       }
     })
-
     ipcRenderer.on('file-save', (event, arg) => {
       this._saveScript();
     })
-    ipcRenderer.on('newfile-choose-reply', (event, arg) => {
-      this.setState({newfilePath:arg[0]})
-    })
+
     ipcRenderer.on('openfile-choose-reply', (event, arg) => {
       if (!this.state.file || !this.state.scripto) {
         var scobj = new scripto.Skripto();
@@ -72,92 +70,22 @@ class Main extends Component {
       }
     })
 
-    this._onScriptUpdate = this._onScriptUpdate.bind(this);
     this._saveScript = this._saveScript.bind(this);
-    this._catchItemKeys = this._catchItemKeys.bind(this);
-    this._createScriptChooseFileName = this._createScriptChooseFileName.bind(this);
+  }
+  /*
+    UI EVENTS
+  */
+  ui_onLightMode(e) {
+    this.setState({lightMode:e.currentTarget.checked})
+  }
+  ui_changeActivity(act) {
+    this.setState({activity:act})
   }
 
-  onLightMode(e) {
-    this.setState({darkMode:e.currentTarget.checked})
-  }
+  /*
+    UPDATE SCRIPT
+  */
 
-  componentWillMount() {
-    /* Get file input, if it exists*/
-    if (qs.parse(this.props.location.search)) {
-      var file = qs.parse(this.props.location.search).file;
-      var activity = qs.parse(this.props.location.search).activity || 'write';
-      this.setState({file:file, activity:activity})
-    } else {
-      console.log("no file");
-    }
-  }
-
-  async componentDidMount(e) {
-    /* Load file, if it exists*/
-    var scobj = new scripto.Skripto();
-    const self = this;
-
-    if (this.state.file) {
-      fs.readFile(this.state.file, function read(err, data) {
-        if (err) {
-            throw err;
-        }
-        scobj.loadData(data);
-        var scrd = scobj.getScript();
-        self.setState({scripto:scobj, scriptData:scrd})
-      });
-    }
-
-  }
-
-  componentDidUpdate() {
-    if (this.focusItem) {
-      if (this.focusItem.textarea) {
-        console.log('updating focus')
-        this.focusItem.textarea.focus()
-      } else {
-        this.focusItem.focus()
-      }
-    }
-  }
-
-  /* CATCH KEYBOARD BEFORE UPDATING - ADD/REMOVE LINE */
-  _catchItemKeys(e, item) {
-
-    if (this.state.fileSaved) {
-      this.setState({fileSaved:false})
-    }
-
-    var nextItemType = null;
-    /*TODO : set specific item type for new item*/
-
-    if (e.key === 'Tab' || e.key==='Enter'){
-      /* CREATE NEW LINE */
-      e.preventDefault();
-      this.state.scripto.updateScriptItem(item);
-      this.state.scripto.addScriptItem(item.id, {type:item.type,content:'', id:item.id+1});
-      this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id+1});
-      this._saveScript();
-    } else if (e.key==='Backspace' && item.content===""){
-      /* REMOVE CURRENT LINE */
-      e.preventDefault();
-      this.state.scripto.removeScriptItem(item);
-      this.setState({scriptData:this.state.scripto.getScript(), focusItem:item.id-1});
-      this._saveScript();
-    }
-  }
-  /* UPDATE SCRIPT */
-  _onScriptUpdate(e,item) {
-    if (this.state.fileSaved) {
-      this.setState({fileSaved:false})
-    }
-    var newitem = item;
-    newitem.content = e.target.value;
-    //this.refs[item.id].defaultValue=newitem.content;
-    this.state.scripto.updateScriptItem(newitem);
-    /*this.setState({scriptData:this.state.scripto.getScript()});*/
-  }
   /* SAVE WHOLE SKRIPT TO FILE */
   _saveScript() {
     if (this.state.scripto) {
@@ -174,58 +102,64 @@ class Main extends Component {
     }
     console.log('saved');
   }
-
-  /* SEND EVENT TO ELECTRON TO CHOOSE FILE*/
-  _createScriptChooseFileName(){
-      ipcRenderer.send('newfile-choose', null)
-  }
-  /* SET FILE NAME */
-  _createScriptChangeTitle(e) {
-    this.setState({newfileName:e.target.value})
-  }
-  /* SAVE FIRST INSTANCE OF FILE - NOTHING IN IT BUT IT'S CREATED*/
-  _createScriptSaveFile(){
-    if (this.state.newfilePath && this.state.newfileName){
-      /* TODO : maybe replace spaces in filename? or prevent this in input tag*/
-      var wholepath = pathlib.join(this.state.newfilePath, this.state.newfileName.toString()+'.skripto');
-      var sko = new scripto.Skripto();
-      sko.loadSkeletonData();
-      var baseScriptData = [
-        {type:'§S', content:"", id:0}
-      ]
-      sko.setScript(baseScriptData);
-      this.setState({file:wholepath.toString(), scripto: sko , scriptData:baseScriptData, activity:'control'});
-      fs.writeFile(wholepath, "", function(err){
-        if (err) {
-          return console.log(err);
-        }
-      });
+  _changeSavedState(bool) {
+    if (this.state.fileSaved!==bool){
+      this.setState({fileSaved:bool})
     }
   }
-  /* SEND EVENT TO ELECTRON TO CHOOSE FILE TO OPEN*/
-  _openScriptChooseFile(){
-    ipcRenderer.send('openfile-choose', null)
+
+
+  /*
+      CREATED FILE EVENT
+  */
+  _newFileCreated(f, scr) {
+    this.setState({file:f, scripto:scr,scriptData:scr.getScriptObjects(), fileSaved:true,activity:'control'});
   }
 
-  /* Change Activity */
-  _changeActivity(act) {
-    this.setState({activity:act})
+
+  componentWillMount() {
+    /* Get file input, if it exists*/
+    if (qs.parse(this.props.location.search)) {
+      var file = qs.parse(this.props.location.search).file;
+      var activity = qs.parse(this.props.location.search).activity || 'write';
+      this.setState({file:file, activity:activity})
+    } else {
+      console.log("no file");
+    }
+  }
+
+  async componentDidMount(e) {
+    /* Load file, if it exists*/
+    const self = this;
+
+    if (this.state.file) {
+      fs.readFile(this.state.file, function read(err, data) {
+        if (err) {
+            throw err;
+        }
+        var scobj = new scripto.Skripto();
+        scobj.loadData(data);
+        var scrd = scobj.getScript();
+        self.setState({scripto:scobj, scriptData:scrd})
+      });
+    }
+
   }
 
 
   render() {
-    if (this.state.darkMode) {
-      var headerColor = "#202020";
-      var contentColor = "#252525";
-      var borderColor = "#404040";
+    if (this.state.lightMode) {
+      var headerColor = "#EDE7E1";
+      var contentColor = "#F1EDE5";
+      var borderColor = "#D3CDBD";
+      var uiLighState = "light";
     } else {
-      headerColor = "#E6DED2";
-      contentColor = "#E1DAC9";
-      borderColor = "#D3CDBD";
+      headerColor = "#202022";
+      contentColor = "#252527";
+      borderColor = "#404040";
+      uiLighState = "dark";
     }
-
     if (this.state.scripto) {
-
       var scriptMetadata = this.state.scripto.getMetaData();
       var scriptContent = this.state.scriptData.map((item) => {
         if (item.id===this.state.focusItem) {
@@ -302,11 +236,11 @@ class Main extends Component {
               <div className="Layout-left" style={{borderColor:borderColor}}></div>
               <div className="Layout-main">
                 <p className="App-title">Skripto - {this.state.scripto && scriptMetadata.title}</p>
-                <p className="Script-Right-Label">Dark</p>
-
                 <label className="switch">
-                  <input type="checkbox" onChange={(e) => this.onLightMode(e) } checked={this.state.darkMode}/>
+                  <input type="checkbox" onChange={(e) => this.ui_onLightMode(e) } checked={this.state.lightMode}/>
                   <span className="slider round"></span>
+                  <p className="label">{uiLighState}</p>
+
                 </label>
               </div>
             </div>
@@ -317,8 +251,8 @@ class Main extends Component {
 
                 <div className="Global-layout" >
                   <div className="Global-layout-choicebox" style={{borderColor:borderColor}}>
-                    <a className="Global-layout-choice info" onClick={()=>{this._changeActivity('control')}} ></a>
-                    <a className="Global-layout-choice write" onClick={()=>{this._changeActivity('write')}} ></a>
+                    <a className="Global-layout-choice info" onClick={()=>{this.ui_changeActivity('control')}} ></a>
+                    <a className="Global-layout-choice write" onClick={()=>{this.ui_changeActivity('write')}} ></a>
                     <a className="Global-layout-choice info" ></a>
                   </div>
                   <div className="Global-layout-content">
@@ -326,7 +260,7 @@ class Main extends Component {
                       this.state.activity==="write" && this.state.scripto &&
 
                       <div>
-                        {scriptMetadata.title}
+                        <TreeView  items={this.state.scripto.getScriptTree()}/>
 
                       </div>
                     }
@@ -336,13 +270,13 @@ class Main extends Component {
                   <div className="Settings-Settings"  style={{borderColor:borderColor}}></div>
                   <div className="Settings-IO">
                     <div className="Row">
-                      <div className="Settings-saveFileDisabled">[export]</div>
+                      <button className="Settings-export">[export]</button>
                     </div>
                     <div className="Row">
                       {(() => {
                         switch (this.state.fileSaved) {
-                          case true:return (<div className="Settings-saveFileDisabled">file saved</div>); break;
-                          case false:return (<div className="Settings-saveFile" onClick={()=>{this._saveScript()}}>Save file</div>);break;
+                          case true:return (<button className="Settings-saveFile disabled">file saved</button>); break;
+                          case false:return (<button className="Settings-saveFile" onClick={()=>{this._saveScript()}}>Save file</button>);break;
 
                         }
                       })()}
@@ -352,77 +286,27 @@ class Main extends Component {
               </div>
               <div className="Layout-main">
                 {
-                  this.state.activity==="write" &&
-
-                <div className="Whole-Script">
-                  {scriptContent}
-
-                  {
-                    !scriptContent && this.state.file &&
-
-                    <Placeholder />
-
-                  }
-
-                  {
-                    !scriptContent && !this.state.file &&
-
-                    <div className="CreateFile-Layout">
-                      <div className="CreateFile-Container">
-                          <div className="CreateFile-Row Header">
-                            <div className="CreateFile-Column Title">
-                              <h2 className="CreateFile-HeaderTitle">
-                                Welcome to Skripto
-                              </h2>
-                            </div>
-                          </div>
-                          <div className="CreateFile-Row">
-                            <div className="CreateFile-Column">
-                              <h3 className="CreateFile-title">
-                                Create new Project
-                              </h3>
-                            </div>
-                            <div className="CreateFile-Column">
-
-                                { this.state.newfilePath &&
-                                  <div>
-                                    <p className="CreateFile-filePath">{this.state.newfilePath}</p>
-                                    <button className="CreateFile-fileButton" onClick={()=>this._createScriptChooseFileName()}>1. Choose another folder</button>
-                                  </div>
-                                }
-                                { !this.state.newfilePath &&
-                                  <div>
-                                    <button className="CreateFile-fileButton" onClick={()=>this._createScriptChooseFileName()}>1. Choose a folder</button>
-                                  </div>
-                                }
-                              <input className="CreateFile-filenameInput" onChange={(e)=>this._createScriptChangeTitle(e)} placeholder="2. What's your project's name?" />
-
-                              {canCreate}
-                            </div>
-                          </div>
-                          <div className="CreateFile-Row Open">
-                            <div className="CreateFile-Column">
-                              <h3 className="CreateFile-title">
-                                Open Project
-                              </h3>
-                            </div>
-                            <div className="CreateFile-Column">
-                              <button className="CreateFile-openFile" onClick={()=>this._openScriptChooseFile()}>Open file</button>
-                            </div>
-
-                          </div>
-                      </div>
-                    </div>
-                  }
-                </div>
-              }
-              {
-                this.state.activity==='control' &&
+                  !this.state.file &&
 
                   <div className="Whole-Script">
-                    <ControlActivity scripto={this.state.scripto}/>
+                    <WelcomeActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} onFileCreated={(f, scripto) => this._newFileCreated(f, scripto)} />
                   </div>
-              }
+                }
+                {
+                  this.state.activity==="write" && this.state.file &&
+
+                  <div className="Whole-Script">
+                    <ScriptActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} />
+                  </div>
+                }
+
+                {
+                  this.state.activity==='control' && this.state.file &&
+
+                  <div className="Whole-Script">
+                    <ControlActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} />
+                  </div>
+                }
               </div>
             </div>
           </div>

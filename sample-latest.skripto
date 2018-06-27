@@ -1,9 +1,8 @@
 {
   "file": null,
   "meta": {
-    "title": "LALAlala",
-    "synopsis": "This is a synopsis",
-    "authors": "The Duck, .."
+    "title": "Sample title",
+    "synopsis": "This is a synopsis"
   },
   "global": {
     "characters": [
@@ -29,7 +28,6 @@
     "§D First item",
     "§D Polo",
     "§D Hi, this is dialo",
-    "§D sdfsdf\nsd",
     "§D This is some text",
     "§D Testing the validity of the test",
     "§D léé",
@@ -39,7 +37,7 @@
     "§P Hi, this is a paragraph. One difference being that if you press enter, it will change to a new item"
   ],
   "filetype": {
-    "version": "0.0.4",
+    "version": "0.0.4å",
     "url": "https://github.com/skreenplay/skripto"
   }
 }

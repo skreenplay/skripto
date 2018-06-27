@@ -1,21 +1,16 @@
-// Modules to control application life and create native browser window
-const {app, BrowserWindow, ipcMain, globalShortcut, Menu, dialog} = require('electron');
-const pathlib = require('path');
-const url = require('url');
+const {app, BrowserWindow, globalShortcut, Menu, dialog, ipcMain, remote} = require('electron')
 const fs = require('fs');
+const pathlib = require('path');
 
-// Keep a global reference of the window object
-let mainWindow;
-let baseOpenUrl = `file://${pathlib.join(__dirname, '../build/index.html')}#/`;
-let openUrl = baseOpenUrl;
+/* GLOBAL VALUES */
+let mainWindow
 var baseUserConfig = {
   ui_lightmode : false,
   ui_width:1048,
   ui_height:600
-};
+}
 let userConfig;
-
-
+/* Get User Config */
 const usrDir = app.getPath('userData');
 const usrFilePath = pathlib.join(usrDir, 'skriptoconfig.json');
 
@@ -25,22 +20,29 @@ function getUserConfig() {
   if (fs.existsSync(usrFilePath)) {
     userConfig = JSON.parse(fs.readFileSync(usrFilePath));
   } else {
-      userConfig = baseUserConfig;
-      fs.writeFileSync(usrFilePath, JSON.stringify(userConfig), function(e) {
-        console.log("Error trying to write config file");
-      });
+    userConfig = baseUserConfig;
+    fs.writeFileSync(usrFilePath, JSON.stringify(userConfig), function(e) {
+    console.log("Error trying to write config file");
+    });
   }
 }
 function saveUserConfig() {
   fs.writeFileSync(usrFilePath, JSON.stringify(userConfig));
 }
 
-/* FUNCTIONS */
 function createWindow () {
   /* CREATE WINDOW */
-  mainWindow = new BrowserWindow({width: userConfig.ui_width, height: userConfig.ui_height, titleBarStyle: 'hiddenInset'});
-  mainWindow.loadURL(openUrl);
+  mainWindow = new BrowserWindow({width: userConfig.ui_width, height: userConfig.ui_height, titleBarStyle: 'hiddenInset'})
+  const startUrl = process.env.ELECTRON_START_URL || url.format({
+            pathname: pathlib.join(__dirname, '/../build/index.html'),
+            protocol: 'file:',
+            slashes: true
+        });
+  mainWindow.loadURL(startUrl)
+  //mainWindow.loadFile('../build/index.html')
 
+  /* DEV TOOLS */
+  mainWindow.webContents.openDevTools();
 
   /* MENU */
   const menu = Menu.buildFromTemplate([
@@ -49,7 +51,6 @@ function createWindow () {
         submenu: [
           {
             role:'quit',
-            accelerator:'CommandOrControl+Q',
             label:'Quit'
           }
         ]
@@ -64,7 +65,7 @@ function createWindow () {
           {
             role:'save',
             label:'Save file',
-            accelerator:'CommandOrControl+O',
+            accelerator:'CommandOrControl+S',
             click() {
               mainWindow.webContents.send('file-save')
             }
@@ -75,7 +76,7 @@ function createWindow () {
         label:'View',
         submenu: [
           {
-            role:'switch-darkmode',
+            role:'config-ui-lightmode',
             label:'Switch to Dark/Light mode',
             accelerator:'CommandOrControl+L',
             click() {
@@ -131,11 +132,9 @@ function createWindow () {
   Menu.setApplicationMenu(menu);
   mainWindow.setMenu(menu);
 
-  /* WINDON EVENTS */
+
+  /* WINDOW EVENTS */
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null;
   })
   mainWindow.on('resize', function () {
@@ -150,12 +149,11 @@ function createWindow () {
 function openFile(event, pa) {
   openUrl = baseOpenUrl+"?file="+encodeURIComponent(pa);
   //TODO : open multiple files
+  event.sender.send('file-save', 'pong');
   if (mainWindow === null) {
     createWindow()
   }
 }
-
-
 /* APP EVENTS */
 app.on('open-file', openFile)
 app.on('ready', createWindow)
@@ -169,7 +167,6 @@ app.on('activate', function () {
     createWindow()
   }
 })
-
 
 /* RENDERER EVENTS */
 ipcMain.on('newfile-choose', (event, arg) => {

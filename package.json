@@ -6,23 +6,22 @@
   "homepage": "./",
   "dependencies": {
     "fs": "0.0.1-security",
-    "react": "^16.4.0",
+    "react": "^16.4.1",
     "react-autosize-textarea": "^3.0.3",
-    "react-dom": "^16.4.0",
-    "react-router-dom": "^4.2.2",
+    "react-dom": "^16.4.1",
+    "react-router-dom": "^4.3.1",
     "react-scripts": "^1.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject",
     "dev": "nf start",
-    "electron-dev": "electron src/dev-electron-main.js",
+    "electron-dev": "electron dev-scripts/electron-main.js",
+    "react-dev": "react-scripts start",
     "preelectron-pack": "npm run build",
     "electron-pack": "electron-builder --dir",
-    "preelectron-dist": "npm run build",
-    "electron-dist": "electron-builder"
+    "prepackage": "npm run build",
+    "package": "electron-builder"
   },
   "build": {
     "productName": "Skripto",
@@ -32,13 +31,35 @@
       "category": "public.app-category.utilities",
       "extendInfo": [
         {
-          "CFBundleTypeExtensions": [
-            "skripto"
+          "CFBundleDocumentTypes": [
+            {
+              "CFBundleTypeExtensions": [
+                "skripto"
+              ],
+              "CFBundleTypeIconFile": "skriptofile.icns",
+              "CFBundleTypeName": "public.skripto",
+              "CFBundleTypeRole": "Editor",
+              "LSHandlerRank": "Alternate",
+              "LSItemContentTypes": [
+                "public.skripto"
+              ]
+            }
           ],
-          "CFBundleTypeIconFile": "skriptofile.icns",
-          "CFBundleTypeName": "Screenplay File",
-          "CFBundleTypeRole": "Editor",
-          "LSHandlerRank": "Alternate"
+          "UTImportedTypeDeclarations": [
+            {
+              "UTTypeConformsTo": [
+                "public.data"
+              ],
+              "UTTypeIdentifier": "public.skripto",
+              "UTTypeTagSpecification": {
+                "com.apple.ostype": "PDF",
+                "public.filename-extension": [
+                  "skripto"
+                ],
+                "public.mime-type": "application/skripto"
+              }
+            }
+          ]
         }
       ]
     },
@@ -60,8 +81,8 @@
     "assets/**/*"
   ],
   "devDependencies": {
-    "electron": "^2.0.2",
-    "electron-builder": "^20.15.1",
+    "electron": "^2.0.3",
+    "electron-builder": "^20.16.0",
     "foreman": "^3.0.0"
   }
 }

@@ -1,3 +1,4 @@
+
 @mixin flexbox() {
   display: -webkit-box;
   display: -moz-box;
@@ -170,34 +171,42 @@
   border-radius: 1.5pt;
   font-family: "Liberation Mono", sans-serif;
   font-size: 11pt;
-  padding:6pt;
+  padding:0pt;
   margin:6pt;
-  height:32pt;
-  line-height: 32pt;
+  height:36pt;
+  width: calc(100% - 12pt);
+  line-height: 24pt;
   outline: none;
   cursor: pointer;
   border-color:#7e7e7e;
   color: rgb(40,175,90);
   text-align: center;
 }
-.Settings-saveFileDisabled {
+.Settings-saveFile.disabled {
+  color:#7e7e7e;
+  opacity: .5;
+}
+
+.Settings-export {
   border-style: solid;
   border-width: 0.5pt;
   border-radius: 1.5pt;
   font-family: "Liberation Mono", sans-serif;
   font-size: 11pt;
-  font-weight: lighter;
-  padding:6pt;
+  padding:0pt;
   margin:6pt;
-  height:32pt;
-  line-height: 32pt;
+  margin-bottom:0pt;
+  height:36pt;
+  width: calc(100% - 12pt);
+  line-height: 24pt;
   outline: none;
   cursor: pointer;
   border-color:#7e7e7e;
-  color:#7e7e7e;
   text-align: center;
+  /* following : temporary disabled button*/
+  color:#7e7e7e;
+  opacity: .5;
 }
-
 /* Specific Values */
 
 .Whole-Script {
@@ -440,19 +449,14 @@
   background:rgb(240,240,240);
 }
 .CreateFile-save {
-  border-style: solid;
-  border-width: 0.5pt;
-  border-radius: 1.5pt;
-  font-family: "Liberation Mono", sans-serif;
-  font-size: 12pt;
+  font-size: 10pt;
   width:calc(100% - 12pt);
-  padding:6pt;
   margin:6pt;
-  outline: none;
-  cursor: pointer;
-  border-color:#7e7e7e;
   color:#e7e7e7;
-  background: rgb(40,175,90)
+  background: linear-gradient(to bottom, rgb(40,175,90) , rgb(35,165,85));
+}
+.CreateFile-save:hover {
+  background: linear-gradient(to bottom, rgb(44,185,100) , rgb(32,160,75));
 }
 .CreateFile-save.disabled {
   opacity: 0.4;
@@ -463,20 +467,11 @@
 }
 
 .CreateFile-openFile {
-  border-style: solid;
-  border-width: 0.5pt;
-  border-radius: 1.5pt;
-  font-family: "Liberation Mono", sans-serif;
-  font-size: 10pt;
   width:calc(100% - 12pt);
   height:56pt;
   padding:6pt;
   margin:6pt;
-  outline: none;
-  cursor: pointer;
-  border-color:#7a7a7a;
   color: rgb(40,175,90);
-  background: transparent;
 }
 
 
@@ -528,20 +523,9 @@
 
 }
 .Control-Input input, .Control-Input textarea {
-  padding:12pt;
-  padding-left:6pt;
-  margin:0pt;
   flex:1;
-  background-color:rgb(220,220,220);
-  border-style: solid;
-  border-width: 0.5pt;
-  border-radius: 1.5pt;
-  border-color:#7e7e7e;
-  color:#7e7e7e;
-  font-size: 12pt;
-  font-family: "Liberation Mono", sans-serif;
-  outline: none;
   cursor: pointer;
+  margin: 0pt;
 }
  .Control-Input.Synopsis {
    flex-basis: 50pt;

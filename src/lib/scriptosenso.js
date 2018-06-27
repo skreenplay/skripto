@@ -76,6 +76,58 @@ function setScriptFromObjects(Skriptobjects){
   return scriptList;
 }
 
+function getScriptTree(scriptType, skriptoData) {
+  var scriptArray = getScriptObjects(skriptoData.script);
+  if (scriptType==="screenplay") {
+    var Tree = {
+      item:'root',
+      label: skriptoData.meta.title,
+      subitems:[]
+    }
+    var latestTitle = null;
+    var latestScene = null;
+    for (var i = 0; i < scriptArray.length; i++) {
+      var scItem = scriptArray[i];
+      var scDict = {
+        item:'subitem',
+        label:scItem.content,
+        id:scItem.id,
+        type:scItem.type
+      }
+      if (scItem.type=='§T') {
+        var newscDict = scDict;
+        newscDict.subitems = [];
+        latestTitle = newscDict;
+        Tree.subitems.push(newscDict)
+      } else if (scItem.type=='§S') {
+        var newscDict = scDict;
+        newscDict.subitems = [];
+        latestScene = newscDict;
+
+        if (latestTitle) {
+          Tree.subitems[Tree.subitems.length - 1].subitems.push(newscDict);
+        } else {
+          Tree.subitems.push(newscDict);
+        }
+      } else {
+        if (latestScene && latestTitle) {
+          Tree.subitems[Tree.subitems.length - 1].subitems[Tree.subitems[Tree.subitems.length - 1].subitems.length - 1].subitems.push(scDict);
+
+        } else if (latestScene && !latestTitle) {
+          Tree.subitems[Tree.subitems.length - 1].subitems.push(scDict);
+
+        } else if (!latestScene && latestTitle) {
+          Tree.subitems[Tree.subitems.length - 1].subitems.push(scDict);
+
+        } else  {
+          Tree.subitems.push(scDict);
+        }
+      }
+    }
+    return Tree;
+  }
+}
+
 function Skripto() {
   var data = dataSkeleton;
   /* Input and output */
@@ -97,6 +149,7 @@ function Skripto() {
   this.getScriptRaw = function () {return this.data.script;};
   this.getScript = function () {return getScriptObjects(this.data.script)} // depeciated
   this.getScriptObjects = function () {return getScriptObjects(this.data.script)}
+  this.getScriptTree = function() {return getScriptTree('screenplay',this.data)}
 
   /* Set functions*/
   this.setMetaData = function (metadata) {

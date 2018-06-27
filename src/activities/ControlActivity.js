@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import TextareaAutosize from 'react-autosize-textarea';
-import '../App.css';
 const {remote, ipcRenderer, dialog} = window.require('electron');
 
 
@@ -41,15 +40,18 @@ export default class ControlActivity extends Component {
       synopsis:this.state.metadataSynopsis,
       authors : this.state.metadataAuthor
     }
+    this.props.onFileSaved(false);
     this.props.scripto.setMetaData(newMetadata);
     this.setState({metadataTitle:e.target.value})
   }
+
   _updateSynopsis(e) {
     var newMetadata = {
       title:this.state.metadataTitle,
       synopsis:e.target.value,
       authors : this.state.metadataAuthor
     }
+    this.props.onFileSaved(false);
     this.props.scripto.setMetaData(newMetadata);
     this.setState({metadataSynopsis:e.target.value})
   }
@@ -59,6 +61,7 @@ export default class ControlActivity extends Component {
       synopsis:this.state.metadataSynopsis,
       authors : e.target.value
     }
+    this.props.onFileSaved(false);
     this.props.scripto.setMetaData(newMetadata);
     this.setState({metadataAuthors:e.target.value})
   }
@@ -80,15 +83,15 @@ export default class ControlActivity extends Component {
           <div className="Control-inputs">
             <div className="Control-Input">
               <p>Title</p>
-              <input value={this.state.metadataTitle} placeholder="Title" onChange={(e) => this._updateTitle(e)}/>
+              <input value={this.state.metadataTitle} type="text" placeholder="The Flower and the Pot" onChange={(e) => this._updateTitle(e)}/>
             </div>
             <div className="Control-Input Synopsis">
               <p>Synopsis</p>
-              <textarea value={this.state.metadataSynopsis} placeholder="Synopsis" onChange={(e) => this._updateSynopsis(e)} />
+              <textarea value={this.state.metadataSynopsis} placeholder="Once upon a time ..." onChange={(e) => this._updateSynopsis(e)} />
             </div>
             <div className="Control-Input">
               <p>Author</p>
-              <input value={this.state.metadataAuthors} placeholder="Authors" onChange={(e) => this._updateAuthors(e)} />
+              <input value={this.state.metadataAuthors} type="text" placeholder="Walter White, ..." onChange={(e) => this._updateAuthors(e)} />
             </div>
           </div>
         </div>
