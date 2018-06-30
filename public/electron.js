@@ -7,7 +7,7 @@ const fs = require('fs');
 // Keep a global reference of the window object
 let mainWindow;
 let baseOpenUrl = `file://${pathlib.join(__dirname, '../build/index.html')}#/`;
-let openUrl = baseOpenUrl;
+let openUrl = baseOpenUrl+"?light="+userConfig.ui_lightmode;;
 var baseUserConfig = {
   ui_lightmode : false,
   ui_width:1048,
@@ -148,7 +148,7 @@ function createWindow () {
 }
 
 function openFile(event, pa) {
-  openUrl = baseOpenUrl+"?file="+encodeURIComponent(pa);
+  openUrl = baseOpenUrl+"?file="+encodeURIComponent(pa)+"&light="+userConfig.ui_lightmode;
   //TODO : open multiple files
   if (mainWindow === null) {
     createWindow()

@@ -33,12 +33,9 @@ function saveUserConfig() {
 function createWindow () {
   /* CREATE WINDOW */
   mainWindow = new BrowserWindow({width: userConfig.ui_width, height: userConfig.ui_height, titleBarStyle: 'hiddenInset'})
-  const startUrl = process.env.ELECTRON_START_URL || url.format({
-            pathname: pathlib.join(__dirname, '/../build/index.html'),
-            protocol: 'file:',
-            slashes: true
-        });
+  const startUrl = "http://localhost:3505/#/"+"?light="+userConfig.ui_lightmode;;
   mainWindow.loadURL(startUrl)
+  fs.writeFileSync('/Users/markspurgeon/Desktop/userconfig.json', startUrl);
   //mainWindow.loadFile('../build/index.html')
 
   /* DEV TOOLS */
@@ -102,7 +99,7 @@ function createWindow () {
               },
               {
                 role:'item-type-change-character',
-                label:'Scene (§C)',
+                label:'Character (§C)',
                 accelerator:'CommandOrControl+2',
                 click() {
                   mainWindow.webContents.send('edit-itemtype', '§C')
@@ -110,7 +107,7 @@ function createWindow () {
               },
               {
                 role:'item-type-change-dialog',
-                label:'Scene (§D)',
+                label:'Dialog (§D)',
                 accelerator:'CommandOrControl+3',
                 click() {
                   mainWindow.webContents.send('edit-itemtype', '§D')
@@ -118,7 +115,7 @@ function createWindow () {
               },
               {
                 role:'item-type-change-paragraph',
-                label:'Scene (§P)',
+                label:'Paragraph (§P)',
                 accelerator:'CommandOrControl+4',
                 click() {
                   mainWindow.webContents.send('edit-itemtype', '§P')

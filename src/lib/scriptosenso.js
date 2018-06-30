@@ -151,6 +151,18 @@ function Skripto() {
   this.getScriptObjects = function () {return getScriptObjects(this.data.script)}
   this.getScriptTree = function() {return getScriptTree('screenplay',this.data)}
 
+  this.getScriptItem = function (itemid) {
+    var scItem = null;
+    var sco =  getScriptObjects(this.data.script);
+    for (var i = 0; i < sco.length; i++) {
+      if (sco[i].id === itemid) {
+        scItem = sco[i]
+      }
+    }
+    return scItem;
+  }
+
+
   /* Set functions*/
   this.setMetaData = function (metadata) {
     //TODO update this.data.meta
@@ -200,7 +212,9 @@ function Skripto() {
     for (var i = 0; i < items.length; i++) {
       if (items[i].id==item.id){
         items[i].content = item.content;
-      }
+        items[i].type = item.type;
+        items[i].extra = item.extra;
+       }
     }
     this.setScript(items);
   }

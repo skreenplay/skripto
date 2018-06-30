@@ -14,6 +14,7 @@ import ControlActivity from './activities/ControlActivity';
 import ScriptActivity from './activities/ScriptActivity';
 
 
+var skriptoLists = require('./lib/lists');
 var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
 const {remote, ipcRenderer, dialog} = window.require('electron');
@@ -42,7 +43,6 @@ class Main extends Component {
 
     /* EVENTS SENT FROM ELECTRON */
     ipcRenderer.on('config-ui-lightmode', (event, arg) => {
-      console.log('o');
       if (this.state.lightMode) {
         this.setState({lightMode:false})
       } else {
@@ -52,7 +52,6 @@ class Main extends Component {
     ipcRenderer.on('file-save', (event, arg) => {
       this._saveScript();
     })
-
     ipcRenderer.on('openfile-choose-reply', (event, arg) => {
       if (!this.state.file || !this.state.scripto) {
         var scobj = new scripto.Skripto();
@@ -68,7 +67,7 @@ class Main extends Component {
       } else {
         /* if file is already open*/
       }
-    })
+    });
 
     this._saveScript = this._saveScript.bind(this);
   }
@@ -122,7 +121,12 @@ class Main extends Component {
     if (qs.parse(this.props.location.search)) {
       var file = qs.parse(this.props.location.search).file;
       var activity = qs.parse(this.props.location.search).activity || 'write';
-      this.setState({file:file, activity:activity})
+      var light = qs.parse(this.props.location.search).light;
+      console.log(light);
+      if (light===undefined) {
+        light=false;
+      }
+      this.setState({file:file, activity:activity, lightMode:light})
     } else {
       console.log("no file");
     }
