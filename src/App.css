@@ -93,12 +93,42 @@
   position: relative;
 }
 
+.App-Title-Layout {
+  flex:2;
+}
+/* Toolbar */
+.Toolbar-Layout {
+  flex:1;
+  height: 28pt;
+}
+.Toolbar-Switch {
+  float:right;
+  display: block;
+  height: 28pt;
+}
+.Toolbar-Items {
+  float:right;
+  display:block;
+  height: 28pt;
+}
+.Toolbar-item {
+  width: 32pt;
+  display: block;
+  top:0pt;
+  margin:0pt;
+  padding:0pt;
+  border-style: solid;
+  border-width: 0pt;
+  border-left-width: 0.5pt;
+  border-color:#7e7e7e;
+  overflow:hidden;
+}
 
 
 /* Left Layout */
 .Global-layout {
   flex:1;
-  opacity: .1;
+  opacity: .5;
   transition: opacity .2s;
 }
 .Global-layout:hover {
@@ -163,6 +193,51 @@
 }
 .Settings-IO .Row {
   flex:1;
+}
+.Settings-Settings-Cog {
+  background-image: url('../src/icons/settings.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  border-style: none;
+  display: block;
+  width: 28pt;
+  height:24pt;
+  margin:6pt
+}
+.Settings-Settings-Cog:hover {
+  background-image: url('../src/icons/settings.png');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.Settings-Settings-Report {
+  background-image: url('../src/icons/report.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  border-style: none;
+  display: block;
+  width: 28pt;
+  height:24pt;
+  margin:6pt
+}
+.Settings-Settings-Report:hover {
+  background-image: url('../src/icons/report.png');
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.Settings-Settings-Help {
+  background-image: url('../src/icons/help.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  border-style: none;
+  display: block;
+  width: 28pt;
+  height:24pt;
+  margin:6pt
+}
+.Settings-Settings-Help:hover {
+  background-image: url('../src/icons/help.png');
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .Settings-saveFile {

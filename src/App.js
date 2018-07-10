@@ -13,12 +13,16 @@ import WelcomeActivity from './activities/WelcomeActivity';
 import ControlActivity from './activities/ControlActivity';
 import ScriptActivity from './activities/ScriptActivity';
 
+import Toolbar from './components/Toolbar';
+
 
 var skriptoLists = require('./lib/lists');
 var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
-const {remote, ipcRenderer, dialog} = window.require('electron');
+const {remote, ipcRenderer, dialog, shell} = window.require('electron');
 const pathlib = window.require('path');
+
+var plugins = null;
 
 
 class Main extends Component {
@@ -26,13 +30,14 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      lightMode:false,
+      lightMode:true,
       file:null,
       activity:'write',
       newfilePath:null,
       newfileName:null,
       layoutState:"write",
-      fileSaved:true
+      fileSaved:true,
+      plugins:null
     }
 
     this.focusItem = null;
@@ -42,12 +47,12 @@ class Main extends Component {
     };
 
     /* EVENTS SENT FROM ELECTRON */
-    ipcRenderer.on('config-ui-lightmode', (event, arg) => {
-      if (this.state.lightMode) {
-        this.setState({lightMode:false})
-      } else {
-        this.setState({lightMode:true})
-      }
+    ipcRenderer.on('plugins:update', (event, arg) => {
+      this.setState({plugins:JSON.parse(arg)})
+    })
+    ipcRenderer.on('config-ui', (event, arg) => {
+      var arg = JSON.parse(arg);
+      this.ui_updateFromConfig(arg)
     })
     ipcRenderer.on('file-save', (event, arg) => {
       this._saveScript();
@@ -74,8 +79,13 @@ class Main extends Component {
   /*
     UI EVENTS
   */
+  ui_updateFromConfig(arg) {
+    var newLightMode = arg.ui_lightmode;
+    this.setState({lightMode:newLightMode})
+  }
   ui_onLightMode(e) {
     this.setState({lightMode:e.currentTarget.checked})
+    ipcRenderer.sendSync('set-config-ui-lightmode',e.currentTarget.checked)
   }
   ui_changeActivity(act) {
     this.setState({activity:act})
@@ -121,15 +131,16 @@ class Main extends Component {
     if (qs.parse(this.props.location.search)) {
       var file = qs.parse(this.props.location.search).file;
       var activity = qs.parse(this.props.location.search).activity || 'write';
-      var light = qs.parse(this.props.location.search).light;
-      console.log(light);
-      if (light===undefined) {
-        light=false;
-      }
-      this.setState({file:file, activity:activity, lightMode:light})
+      var config = JSON.parse(qs.parse(this.props.location.search).config) || {ui_lightmode:false};
+      this.ui_updateFromConfig(config);
+      console.log(config);
+      this.setState({file:file, activity:activity});
     } else {
       console.log("no file");
     }
+    /*var s = String(fs.readFileSync("/Users/markspurgeon/Desktop/skripto/skripto/public/plugins/example_converted.js"));
+    console.log(s);
+    plugins = requireFromString(s);*/
   }
 
   async componentDidMount(e) {
@@ -148,11 +159,13 @@ class Main extends Component {
       });
     }
 
+    /* LOAD PLUGINS */
+
   }
 
 
   render() {
-    if (this.state.lightMode) {
+    if (this.state.lightMode===true) {
       var headerColor = "#EDE7E1";
       var contentColor = "#F1EDE5";
       var borderColor = "#D3CDBD";
@@ -239,13 +252,20 @@ class Main extends Component {
             <div className="Layout-flex">
               <div className="Layout-left" style={{borderColor:borderColor}}></div>
               <div className="Layout-main">
-                <p className="App-title">Skripto - {this.state.scripto && scriptMetadata.title}</p>
-                <label className="switch">
-                  <input type="checkbox" onChange={(e) => this.ui_onLightMode(e) } checked={this.state.lightMode}/>
-                  <span className="slider round"></span>
-                  <p className="label">{uiLighState}</p>
+                <div className="App-Title-Layout">
+                  <p className="App-title">Skripto {this.state.scripto && scriptMetadata.title}</p>
+                </div>
+                <div className="Toolbar-Layout">
+                  <div className="Toolbar-Switch">
+                    <label className="switch">
+                      <input type="checkbox" onChange={(e) => this.ui_onLightMode(e) } checked={this.state.lightMode}/>
+                      <span className="slider round"></span>
+                      <p className="label">{uiLighState}</p>
 
-                </label>
+                    </label>
+                  </div>
+                  <Toolbar scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} plugins={this.state.plugins} />
+                </div>
               </div>
             </div>
           </header>
@@ -261,6 +281,13 @@ class Main extends Component {
                   </div>
                   <div className="Global-layout-content">
                     {
+                      plugins &&
+
+                        <plugins.Addon/>
+
+                    }
+
+                    {
                       this.state.activity==="write" && this.state.scripto &&
 
                       <div>
@@ -271,7 +298,12 @@ class Main extends Component {
                   </div>
                 </div>
                 <div className="Settings-layout" style={{borderColor:borderColor}}>
-                  <div className="Settings-Settings"  style={{borderColor:borderColor}}></div>
+                  <div className="Settings-Settings"  style={{borderColor:borderColor}}>
+                    <button className="Settings-Settings-Cog" title="Settings for Skripto" onClick={()=>{this._saveScript()}}></button>
+                    <button className="Settings-Settings-Report" title="Report an issue" onClick={()=>{shell.openExternal('https://github.com/skreenplay/skripto/issues/new')}}></button>
+                      <button className="Settings-Settings-Help" title="Report an issue" onClick={()=>{shell.openExternal('https://github.com/skreenplay/skripto/issues/new')}}></button>
+
+                  </div>
                   <div className="Settings-IO">
                     <div className="Row">
                       <button className="Settings-export">[export]</button>
@@ -281,7 +313,6 @@ class Main extends Component {
                         switch (this.state.fileSaved) {
                           case true:return (<button className="Settings-saveFile disabled">file saved</button>); break;
                           case false:return (<button className="Settings-saveFile" onClick={()=>{this._saveScript()}}>Save file</button>);break;
-
                         }
                       })()}
                     </div>
@@ -293,6 +324,7 @@ class Main extends Component {
                   !this.state.file &&
 
                   <div className="Whole-Script">
+
                     <WelcomeActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} onFileCreated={(f, scripto) => this._newFileCreated(f, scripto)} />
                   </div>
                 }

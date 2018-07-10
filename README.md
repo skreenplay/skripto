@@ -27,7 +27,7 @@ Check out the [file.skripto](https://github.com/skreenplay/file.skripto) repo to
 3. Build - package  
 
     ```
-    npm run electron-dist
+    npm run package
 
     ```
 

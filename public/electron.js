@@ -6,41 +6,87 @@ const fs = require('fs');
 
 // Keep a global reference of the window object
 let mainWindow;
-let baseOpenUrl = `file://${pathlib.join(__dirname, '../build/index.html')}#/`;
-let openUrl = baseOpenUrl+"?light="+userConfig.ui_lightmode;;
 var baseUserConfig = {
   ui_lightmode : false,
   ui_width:1048,
   ui_height:600
 };
 let userConfig;
-
-
 const usrDir = app.getPath('userData');
 const usrFilePath = pathlib.join(usrDir, 'skriptoconfig.json');
 
 getUserConfig();
 
+let baseOpenUrl = `file://${pathlib.join(__dirname, '../build/index.html')}#/`;
+let openUrl = baseOpenUrl+"?config="+JSON.stringify(userConfig);
+
 function getUserConfig() {
   if (fs.existsSync(usrFilePath)) {
     userConfig = JSON.parse(fs.readFileSync(usrFilePath));
   } else {
-      userConfig = baseUserConfig;
-      fs.writeFileSync(usrFilePath, JSON.stringify(userConfig), function(e) {
-        console.log("Error trying to write config file");
-      });
+    userConfig = baseUserConfig;
+    saveUserConfig()
   }
 }
 function saveUserConfig() {
   fs.writeFileSync(usrFilePath, JSON.stringify(userConfig));
 }
 
+function getPlugins() {
+  var pluginTree = {
+    Toolbar: [
+
+    ],
+    Editor: [
+
+    ],
+    Global: [
+
+    ]
+  }
+  var pluginsPath = pathlib.join(process.resourcesPath, "plugins/")
+  var pluginsPath = pathlib.join("/Users/markspurgeon/Desktop/skripto/skripto", "plugins/")
+
+  fs.readdirSync(pluginsPath).forEach(function(folder) {
+    if (folder!==".DS_Store"){
+      var plPlugin = pathlib.join(pluginsPath, folder, 'plugin/');
+
+      if (fs.existsSync(plPlugin)){
+        fs.readdirSync(plPlugin).forEach(function(item) {
+          if (item==="manifest.json") {
+            var manifestFile = pathlib.join(plPlugin, item)
+            config = JSON.parse(fs.readFileSync(manifestFile));
+            if (config.where) {
+              var newPlugin = config;
+              newPlugin.path = pathlib.join(plPlugin,"plugin.js")
+              pluginTree[config.where].push(newPlugin);
+            }
+
+          }
+        });
+      }
+    }
+  });
+  return pluginTree
+}
+
+/* UI Config Functions */
+function ui_switchLightMode() {
+  if (userConfig.ui_lightmode===true) {
+    userConfig.ui_lightmode=false
+  } else {
+    userConfig.ui_lightmode=true
+  }
+  saveUserConfig()
+  mainWindow.webContents.send('config-ui', JSON.stringify(userConfig))
+}
+
 /* FUNCTIONS */
 function createWindow () {
   /* CREATE WINDOW */
-  mainWindow = new BrowserWindow({width: userConfig.ui_width, height: userConfig.ui_height, titleBarStyle: 'hiddenInset'});
+  mainWindow = new BrowserWindow({width: userConfig.ui_width, height: userConfig.ui_height, titleBarStyle: 'hiddenInset', backgroundColor: '#F1EDE5', show:false});
   mainWindow.loadURL(openUrl);
-
+  mainWindow.webContents.openDevTools();
 
   /* MENU */
   const menu = Menu.buildFromTemplate([
@@ -59,12 +105,16 @@ function createWindow () {
         submenu: [
           {
             role:'open',
-            label:'Open file'
+            label:'Open file',
+            accelerator:'CommandOrControl+O',
+            click() {
+              mainWindow.webContents.send('file-open-new')
+            }
           },
           {
             role:'save',
             label:'Save file',
-            accelerator:'CommandOrControl+O',
+            accelerator:'CommandOrControl+S',
             click() {
               mainWindow.webContents.send('file-save')
             }
@@ -79,7 +129,7 @@ function createWindow () {
             label:'Switch to Dark/Light mode',
             accelerator:'CommandOrControl+L',
             click() {
-              mainWindow.webContents.send('config-ui-lightmode')
+              ui_switchLightMode()
             }
           }
         ]
@@ -132,6 +182,12 @@ function createWindow () {
   mainWindow.setMenu(menu);
 
   /* WINDON EVENTS */
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+    mainWindow.webContents.send('config-ui',JSON.stringify(userConfig));
+    var plConfig = getPlugins()
+    mainWindow.webContents.send('plugins:update',JSON.stringify(plConfig));
+  })
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows
     // in an array if your app supports multi windows, this is the time
@@ -172,6 +228,7 @@ app.on('activate', function () {
 
 
 /* RENDERER EVENTS */
+
 ipcMain.on('newfile-choose', (event, arg) => {
     dialog.showOpenDialog({properties: ['openDirectory']}, (fp, bm) => {
       try {
@@ -183,6 +240,7 @@ ipcMain.on('newfile-choose', (event, arg) => {
     });
   event.returnValue = 'pong';
 })
+
 ipcMain.on('openfile-choose', (event, arg) => {
   dialog.showOpenDialog({properties: ['openFile']}, (fp, bm) => {
     try {
@@ -193,4 +251,10 @@ ipcMain.on('openfile-choose', (event, arg) => {
     }
   });
   event.returnValue = 'pong';
+})
+
+ipcMain.on('set-config-ui-lightmode', (event, arg) => {
+    userConfig.ui_lightmode = arg;
+    saveUserConfig()
+    event.returnValue = 'pong';
 })

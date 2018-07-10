@@ -1,0 +1,8 @@
+{
+  "name":"Ask for a new Feature",
+  "version":"0.0.1",
+  "copyright":"Copyright © 2018 Mark Spurgeon ",
+  "type":"option",
+  "where":"Toolbar",
+  "ToolbarMenu":true
+}

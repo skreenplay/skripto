@@ -1,0 +1,35 @@
+{
+  "name": "skripto-asknewfeature",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "build": "babel src -d build && small -i build/plugin.js -o build/main.js"
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "react"
+    ],
+    "plugins": [
+      "babel-plugin-add-module-exports",
+      "transform-react-jsx"
+    ]
+  },
+  "browserify-global-shim": {
+    "react": "React",
+    "react-dom": "ReactDOM"
+  },
+  "dependencies": {
+    "react": "^16.4.1"
+  },
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-core": "^6.26.3",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
+    "browserify": "^16.2.2",
+    "browserify-global-shim": "^1.0.3",
+    "webpack": "^4.15.1",
+    "webpack-cli": "^3.0.8"
+  }
+}

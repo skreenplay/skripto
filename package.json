@@ -1,21 +1,36 @@
 {
   "name": "skripto",
   "main": "public/electron.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "homepage": "./",
   "dependencies": {
+    "ajv": "^6.5.2",
+    "ajv-keywords": "^3.2.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-es2015": "^6.24.1",
+    "chalk": "^2.0.1",
+    "coffee-script": "^1.12.7",
+    "create-react-class": "^15.6.3",
+    "eval": "^0.1.2",
     "fs": "0.0.1-security",
+    "module": "^1.2.5",
+    "node-eval": "^2.0.0",
     "react": "^16.4.1",
     "react-autosize-textarea": "^3.0.3",
     "react-dom": "^16.4.1",
     "react-router-dom": "^4.3.1",
-    "react-scripts": "^1.1.4"
+    "react-scripts": "^1.1.4",
+    "react-treeview": "^0.4.7",
+    "systemjs": "^0.21.4",
+    "vm2": "^3.6.2"
   },
   "scripts": {
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "dev": "nf start",
+    "electron-dev-built": "electron public/electron.js",
     "electron-dev": "electron dev-scripts/electron-main.js",
     "react-dev": "react-scripts start",
     "preelectron-pack": "npm run build",
@@ -26,61 +41,43 @@
   "build": {
     "productName": "Skripto",
     "appId": "com.skreenplay.skripto",
-    "icon": "build/icon.icns",
+    "icon": "skripto.icns",
     "mac": {
       "category": "public.app-category.utilities",
-      "extendInfo": [
-        {
-          "CFBundleDocumentTypes": [
-            {
-              "CFBundleTypeExtensions": [
-                "skripto"
-              ],
-              "CFBundleTypeIconFile": "skriptofile.icns",
-              "CFBundleTypeName": "public.skripto",
-              "CFBundleTypeRole": "Editor",
-              "LSHandlerRank": "Alternate",
-              "LSItemContentTypes": [
-                "public.skripto"
-              ]
-            }
-          ],
-          "UTImportedTypeDeclarations": [
-            {
-              "UTTypeConformsTo": [
-                "public.data"
-              ],
-              "UTTypeIdentifier": "public.skripto",
-              "UTTypeTagSpecification": {
-                "com.apple.ostype": "PDF",
-                "public.filename-extension": [
-                  "skripto"
-                ],
-                "public.mime-type": "application/skripto"
-              }
-            }
-          ]
-        }
-      ]
+      "electronLanguages": [
+        "en"
+      ],
+      "extendInfo": {
+        "CFBundleDocumentTypes": [
+          {
+            "CFBundleTypeExtensions": [
+              "skripto"
+            ],
+            "CFBundleTypeIconFile": "skriptofile.icns",
+            "CFBundleTypeName": "Skripto File",
+            "CFBundleTypeOSTypes": [
+              "SKRIPTO"
+            ],
+            "LSIsAppleDefaultForType": true,
+            "LSHandlerRank": "default"
+          }
+        ]
+      }
     },
     "dmg": {
-      "icon": "installer.icns"
+      "icon": "skriptoinstaller.icns"
     },
     "files": [
       "build/**/*",
-      "node_modules/**/*",
       "assets/**/*"
     ],
-    "directories": {
-      "buildResources": "assets"
-    }
+    "extraResources": [
+      "assets",
+      "plugins"
+    ]
   },
-  "files": [
-    "build/**/*",
-    "node_modules/**/*",
-    "assets/**/*"
-  ],
   "devDependencies": {
+    "babel-plugin-transform-react-jsx": "^6.24.1",
     "electron": "^2.0.3",
     "electron-builder": "^20.16.0",
     "foreman": "^3.0.0"
