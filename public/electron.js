@@ -32,44 +32,6 @@ function saveUserConfig() {
   fs.writeFileSync(usrFilePath, JSON.stringify(userConfig));
 }
 
-function getPlugins() {
-  var pluginTree = {
-    Toolbar: [
-
-    ],
-    Editor: [
-
-    ],
-    Global: [
-
-    ]
-  }
-  var pluginsPath = pathlib.join(process.resourcesPath, "plugins/")
-  var pluginsPath = pathlib.join("/Users/markspurgeon/Desktop/skripto/skripto", "plugins/")
-
-  fs.readdirSync(pluginsPath).forEach(function(folder) {
-    if (folder!==".DS_Store"){
-      var plPlugin = pathlib.join(pluginsPath, folder, 'plugin/');
-
-      if (fs.existsSync(plPlugin)){
-        fs.readdirSync(plPlugin).forEach(function(item) {
-          if (item==="manifest.json") {
-            var manifestFile = pathlib.join(plPlugin, item)
-            config = JSON.parse(fs.readFileSync(manifestFile));
-            if (config.where) {
-              var newPlugin = config;
-              newPlugin.path = pathlib.join(plPlugin,"plugin.js")
-              pluginTree[config.where].push(newPlugin);
-            }
-
-          }
-        });
-      }
-    }
-  });
-  return pluginTree
-}
-
 /* UI Config Functions */
 function ui_switchLightMode() {
   if (userConfig.ui_lightmode===true) {
@@ -78,7 +40,7 @@ function ui_switchLightMode() {
     userConfig.ui_lightmode=true
   }
   saveUserConfig()
-  mainWindow.webContents.send('config-ui', JSON.stringify(userConfig))
+  mainWindow.webContents.send('config', JSON.stringify(userConfig))
 }
 
 /* FUNCTIONS */
@@ -86,7 +48,7 @@ function createWindow () {
   /* CREATE WINDOW */
   mainWindow = new BrowserWindow({width: userConfig.ui_width, height: userConfig.ui_height, titleBarStyle: 'hiddenInset', backgroundColor: '#F1EDE5', show:false});
   mainWindow.loadURL(openUrl);
-  mainWindow.webContents.openDevTools();
+  /*mainWindow.webContents.openDevTools();*/
 
   /* MENU */
   const menu = Menu.buildFromTemplate([
@@ -184,9 +146,7 @@ function createWindow () {
   /* WINDON EVENTS */
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
-    mainWindow.webContents.send('config-ui',JSON.stringify(userConfig));
-    var plConfig = getPlugins()
-    mainWindow.webContents.send('plugins:update',JSON.stringify(plConfig));
+    mainWindow.webContents.send('config',JSON.stringify(userConfig));
   })
   mainWindow.on('closed', function () {
     // Dereference the window object, usually you would store windows

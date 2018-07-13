@@ -21,6 +21,7 @@ var scripto = require('./lib/scriptosenso');
 const fs = window.require('fs');
 const {remote, ipcRenderer, dialog, shell} = window.require('electron');
 const pathlib = window.require('path');
+const pluginslib = require('./lib/plugins');
 
 var plugins = null;
 
@@ -46,11 +47,11 @@ class Main extends Component {
       this.focusItem = element;
     };
 
-    /* EVENTS SENT FROM ELECTRON */
+    /* EVENTS SENT FROM ELECTRON (MAIN PROCESS) */
     ipcRenderer.on('plugins:update', (event, arg) => {
-      this.setState({plugins:JSON.parse(arg)})
+      this.setState({plugins:pluginslib.getAvailablePlugins()})
     })
-    ipcRenderer.on('config-ui', (event, arg) => {
+    ipcRenderer.on('config', (event, arg) => {
       var arg = JSON.parse(arg);
       this.ui_updateFromConfig(arg)
     })
@@ -76,6 +77,7 @@ class Main extends Component {
 
     this._saveScript = this._saveScript.bind(this);
   }
+
   /*
     UI EVENTS
   */
@@ -90,7 +92,10 @@ class Main extends Component {
   ui_changeActivity(act) {
     this.setState({activity:act})
   }
-
+  /* PLUGINS */
+  _updatePlugins(){
+    this.setState({plugins:pluginslib.getAvailablePlugins()})
+  }
   /*
     UPDATE SCRIPT
   */
@@ -133,7 +138,7 @@ class Main extends Component {
       var activity = qs.parse(this.props.location.search).activity || 'write';
       var config = JSON.parse(qs.parse(this.props.location.search).config) || {ui_lightmode:false};
       this.ui_updateFromConfig(config);
-      console.log(config);
+      this._updatePlugins();
       this.setState({file:file, activity:activity});
     } else {
       console.log("no file");

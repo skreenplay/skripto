@@ -34,43 +34,6 @@ function saveUserConfig() {
   fs.writeFileSync(usrFilePath, JSON.stringify(userConfig));
 }
 /* Plugin Functions */
-function getPlugins() {
-  var pluginTree = {
-    Toolbar: [
-
-    ],
-    Editor: [
-
-    ],
-    Global: [
-
-    ]
-  }
-  var pluginsPath = pathlib.join(process.resourcesPath, "plugins/")
-  var pluginsPath = pathlib.join("/Users/markspurgeon/Desktop/skripto/skripto", "plugins/")
-
-  fs.readdirSync(pluginsPath).forEach(function(folder) {
-    if (folder!==".DS_Store"){
-      var plPlugin = pathlib.join(pluginsPath, folder, 'plugin/');
-
-      if (fs.existsSync(plPlugin)){
-        fs.readdirSync(plPlugin).forEach(function(item) {
-          if (item==="manifest.json") {
-            var manifestFile = pathlib.join(plPlugin, item)
-            config = JSON.parse(fs.readFileSync(manifestFile));
-            if (config.where) {
-              var newPlugin = config;
-              newPlugin.path = pathlib.join(plPlugin,"plugin.js")
-              pluginTree[config.where].push(newPlugin);
-            }
-
-          }
-        });
-      }
-    }
-  });
-  return pluginTree
-}
 
 /* UI Config Functions */
 function ui_switchLightMode() {
@@ -80,7 +43,7 @@ function ui_switchLightMode() {
     userConfig.ui_lightmode=true
   }
   saveUserConfig()
-  mainWindow.webContents.send('config-ui', JSON.stringify(userConfig))
+  mainWindow.webContents.send('config', JSON.stringify(userConfig))
 }
 
 /* Window Functions */
@@ -188,10 +151,8 @@ function createWindow () {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
     /* set up ui, doesn't really need to be there though */
-    mainWindow.webContents.send('config-ui',JSON.stringify(userConfig));
+    mainWindow.webContents.send('config',JSON.stringify(userConfig));
     /* send the plugin tree */
-    var plConfig = getPlugins()
-    mainWindow.webContents.send('plugins:update',JSON.stringify(plConfig));
   })
   mainWindow.on('closed', function () {
     mainWindow = null;

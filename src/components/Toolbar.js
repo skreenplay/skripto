@@ -17,18 +17,14 @@ export default class Toolbar extends Component {
     // - plugins
   }
   render() {
-    console.log('toolbar');
-    console.log(this.props.plugins);
     if (this.props.plugins) {
       var that = this;
       /* Get plugin */
-      var plugin = pluginslib.pluginFromPath(this.props.plugins.Toolbar[0].path);
-      console.log(plugin);
       var items = this.props.plugins.Toolbar.map(function(item) {
         var plugin = pluginslib.pluginFromPath(item.path);
         return (
           <div className="Toolbar-item">
-            <plugin.Main scripto={that.props.scripto} onFileSaved={(e)=>that.props.onFileSaved(e)}/>
+            <plugin.ToolbarItem scripto={that.props.scripto} onFileSaved={(e)=>that.props.onFileSaved(e)}/>
           </div>
         )
         // <plugin.Main scripto={that.props.scripto} onFileSaved={(e)=>this.props.onFileSaved(e)}/>

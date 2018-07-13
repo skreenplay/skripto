@@ -7,13 +7,56 @@ const vm = require('vm');
 const util = require('util');
 
 
+function getAvailablePlugins() {
+  var pluginTree = {
+    Toolbar: [
+
+    ],
+    Editor: [
+
+    ],
+    Global: [
+
+    ]
+  }
+  var pluginsPath = pathlib.join(process.resourcesPath, "plugins/")
+  var pluginsPath = pathlib.join('/Applications/Skripto.app/Contents/Resources/', "plugins/")
+
+  fs.readdirSync(pluginsPath).forEach(function(folder) {
+    if (folder!==".DS_Store"){
+      var plPlugin = pathlib.join(pluginsPath, folder);
+
+      if (fs.existsSync(plPlugin)){
+        fs.readdirSync(plPlugin).forEach(function(item) {
+          if (item==="manifest.json") {
+            var manifestFile = pathlib.join(plPlugin, item)
+            var config = JSON.parse(fs.readFileSync(manifestFile));
+            if (config.where) {
+              for (var i = 0; i < config.where.length; i++) {
+                var itemwhere = config.where[i];
+                var newPlugin = config;
+                newPlugin.path = pathlib.join(plPlugin,"plugin.js")
+                if (!pluginTree[itemwhere]) {
+                  pluginTree[itemwhere] = []
+                }
+                pluginTree[itemwhere].push(newPlugin);
+              }
+            }
+
+          }
+        });
+      }
+    }
+  });
+  return pluginTree
+}
+
 function pluginFromPath(path) {
-  var code = "(function(exports){"+String(fs.readFileSync(path))+"}(module.exports));";
+  var code = "(function(exports){"+String(fs.readFileSync(path))+"}(module.exports));"; //wrap in this function to enable script's exports
   var script = new vm.Script(code);
   var context = vm.createContext({
     React:React,
     Component:React.Component,
-    exports:{},
     module:{},
     console:console
   })
@@ -58,5 +101,6 @@ function requireFromString(code, filename, opts) {
 
 module.exports = {
   requireFromString,
-  pluginFromPath
+  pluginFromPath,
+  getAvailablePlugins
 }

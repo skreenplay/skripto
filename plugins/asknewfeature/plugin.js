@@ -39,19 +39,19 @@ var Main = exports.Main = function (_Component) {
   return Main;
 }(Component);
 
-var Menu = exports.Menu = function (_Component2) {
-  _inherits(Menu, _Component2);
+var ToolbarItem = exports.ToolbarItem = function (_Component2) {
+  _inherits(ToolbarItem, _Component2);
 
-  function Menu(props) {
-    _classCallCheck(this, Menu);
+  function ToolbarItem(props) {
+    _classCallCheck(this, ToolbarItem);
 
-    return _possibleConstructorReturn(this, (Menu.__proto__ || Object.getPrototypeOf(Menu)).call(this, props));
+    return _possibleConstructorReturn(this, (ToolbarItem.__proto__ || Object.getPrototypeOf(ToolbarItem)).call(this, props));
     // Default Props :
     // - skripto (ability to change file's data)
     // - settings (ability to change user settings)
   }
 
-  _createClass(Menu, [{
+  _createClass(ToolbarItem, [{
     key: "render",
     value: function render() {
       return React.createElement(
@@ -62,7 +62,7 @@ var Menu = exports.Menu = function (_Component2) {
     }
   }]);
 
-  return Menu;
+  return ToolbarItem;
 }(Component);
 },{}]},{},[1])(1)
 });

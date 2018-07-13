@@ -1,0 +1,14 @@
+{
+  "name":"Example plugin",
+  "version":"0.0.1",
+  "copyright":"Copyright © 2018 John Doe ",
+  "type":"option",
+  "where":[
+    "Toolbar"
+  ],
+  "config":{
+    "Toolbar":{
+      "openPanel":true
+    }
+  }
+}
