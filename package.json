@@ -23,6 +23,7 @@
     "react-router-dom": "^4.3.1",
     "react-scripts": "^1.1.4",
     "react-treeview": "^0.4.7",
+    "skripto-plugin": "0.0.3",
     "systemjs": "^0.21.4",
     "vm2": "^3.6.2"
   },
@@ -33,15 +34,13 @@
     "electron-dev-built": "electron public/electron.js",
     "electron-dev": "electron dev-scripts/electron-main.js",
     "react-dev": "react-scripts start",
-    "preelectron-pack": "npm run build",
-    "electron-pack": "electron-builder --dir",
-    "prepackage": "npm run build",
+    "prepackage": " bash ./build-scripts/generate-plugins.sh && npm run build",
     "package": "electron-builder"
   },
   "build": {
     "productName": "Skripto",
     "appId": "com.skreenplay.skripto",
-    "icon": "skripto.icns",
+    "icon": "resources/assets/skripto.icns",
     "mac": {
       "category": "public.app-category.utilities",
       "electronLanguages": [
@@ -53,7 +52,7 @@
             "CFBundleTypeExtensions": [
               "skripto"
             ],
-            "CFBundleTypeIconFile": "skriptofile.icns",
+            "CFBundleTypeIconFile": "resources/assets/skriptofile.icns",
             "CFBundleTypeName": "Skripto File",
             "CFBundleTypeOSTypes": [
               "SKRIPTO"
@@ -65,21 +64,33 @@
       }
     },
     "dmg": {
-      "icon": "skriptoinstaller.icns"
+      "icon": "resources/assets/skriptoinstaller.icns"
     },
     "files": [
       "build/**/*",
       "assets/**/*"
     ],
     "extraResources": [
-      "assets",
-      "plugins"
+      {
+        "from": "resources/assets",
+        "to": "assets",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "resources/plugins",
+        "to": "plugin",
+        "filter": [
+          "**/*"
+        ]
+      }
     ]
   },
   "devDependencies": {
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "electron": "^2.0.3",
     "electron-builder": "^20.16.0",
-    "foreman": "^3.0.0"
+    "foreman": "^3.0.1"
   }
 }

@@ -1,7 +1,10 @@
 .debug-info {
   font-weight: normal;
-  font-size: 7pt;
+  font-size: 6pt;
   color:#7e7e7e;
+  display: block;
+  width: 100%;
+  padding: 1pt;
 }
 
 .scripto {
@@ -16,10 +19,12 @@
   border-width: 0 !important;
   border-bottom-width: .5pt !important;
   border-color: transparent !important;
-  width:calc(100%-4pt) !important;
+  width:calc(100% - 4pt) !important;
   outline: 0 !important;
   transition: border-color .1s !important;
   color : #7e7e7e !important;
+  overflow: hidden;
+  margin: 0pt auto !important;
 
 }
 .input:focus {
@@ -34,36 +39,37 @@
   font-size: 14pt;
   line-height: 14pt;
   padding-top:7pt;
-  padding-botto2m:7pt;
-  margin:0
+  padding-bottom:7pt;
 }
 .scripto.§S {
   text-align: center;
   font-size: 12pt;
-  margin:0;
   padding-top:6pt;
   padding-bottom:6pt;
+  width: 256pt;
+
 }
 
 .scripto.§C {
   text-align: center;
   font-size: 12pt;
   text-transform: uppercase;
-  margin:0;
   padding-top:3pt;
   padding-bottom:0pt;
+  width: 256pt;
+
 }
 .scripto.§CA {
   text-align: center;
   font-size: 9pt;
-  margin:0pt;
   padding-top:2pt;
   padding-bottom:3pt;
+  width: 256pt;
 }
 
 .scripto.§D {
   resize: none;
-  width: 256pt;
+  width: 256pt !important;
   display: block;
   margin: 0 auto;
   padding-top:6pt;
@@ -75,6 +81,7 @@
 .scripto.§P {
   resize: none;
   display: block;
+  width:420pt;
   margin: 0 auto;
   padding-top:2pt;
   padding-bottom:6pt;

@@ -6,7 +6,6 @@ import './App.css';
 import './styles/ui.css';
 import './styles/skripto.css';
 
-import {Placeholder} from './components/basic';
 import TreeView from './components/TreeView';
 
 import WelcomeActivity from './activities/WelcomeActivity';
@@ -181,6 +180,10 @@ class Main extends Component {
       borderColor = "#404040";
       uiLighState = "dark";
     }
+    var style = {
+      backgroundColor:contentColor,
+      borderColor:borderColor
+    }
     if (this.state.scripto) {
       var scriptMetadata = this.state.scripto.getMetaData();
       var scriptContent = this.state.scriptData.map((item) => {
@@ -260,8 +263,8 @@ class Main extends Component {
                 <div className="App-Title-Layout">
                   <p className="App-title">Skripto {this.state.scripto && scriptMetadata.title}</p>
                 </div>
-                <div className="Toolbar-Layout">
-                  <div className="Toolbar-Switch">
+                <div className="Toolbar-Layout" >
+                  <div className="Toolbar-Switch" style={{borderColor:borderColor}}>
                     <label className="switch">
                       <input type="checkbox" onChange={(e) => this.ui_onLightMode(e) } checked={this.state.lightMode}/>
                       <span className="slider round"></span>
@@ -269,7 +272,7 @@ class Main extends Component {
 
                     </label>
                   </div>
-                  <Toolbar scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} plugins={this.state.plugins} />
+                  <Toolbar scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} plugins={this.state.plugins} style={style} />
                 </div>
               </div>
             </div>

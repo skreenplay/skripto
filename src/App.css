@@ -23,13 +23,14 @@
   left:0;
   display: flex;
   flex-flow: column;
-  -webkit-app-region: drag;
+  -webkit-user-select: none;
   background: #E1D4C6;
 }
 
 
 
 .App-header {
+  -webkit-app-region: drag;
   background-color: #E6DED2;
   height:28pt;
   min-height:28pt;
@@ -41,6 +42,7 @@
   border-bottom-width: 0.5pt !important;
   border-color:#D3CDBD;
   transition: background-color .3s;
+  overflow: visible;
 }
 .App-content {
   display: flex;
@@ -71,7 +73,7 @@
   flex-direction: row;
   align-items: stretch;
   flex:1;
-  overflow: hidden;
+  overflow: visible;
 }
 .Layout-left {
   flex-basis:196pt;
@@ -105,24 +107,59 @@
   float:right;
   display: block;
   height: 28pt;
+  border-style: solid;
+  border-width: 0pt;
+  border-left-width: 0.5pt !important;
+  border-color:#7e7e7e;
 }
 .Toolbar-Items {
   float:right;
   display:block;
   height: 28pt;
+  overflow: visible;
+}
+.Toolbar-i {
+  position: relative;
+  overflow: visible;
+  float:right;
 }
 .Toolbar-item {
+  float:right;
   width: 32pt;
   height: 28pt;
   display: block;
-  top:0pt;
   margin:0pt;
   padding:0pt;
   border-style: solid;
   border-width: 0pt;
-  border-left-width: 0.5pt;
+  border-left-width: 0.5pt !important;
   border-color:#7e7e7e;
   overflow:hidden;
+  background: transparent !important;
+  color:#7e7e7e;
+  cursor: pointer;
+}
+.Toolbar-item-menu {
+  position: absolute;
+  display: block;
+  z-index: 200;
+  left:-48pt;
+  width:128pt;
+  top:24pt;
+  height:156pt;
+  padding:3pt;
+  border-style: solid;
+  border-width: 0.5pt !important;
+  border-radius: 3pt;
+  color:#7e7e7e;
+}
+.Toolbar-item.Error {
+  background:red !important;
+  color:white;
+  font-size: 7pt;
+  line-height: 9pt;
+  padding-left:1pt;
+  border-color:#7e7e7e;
 }
 
 
@@ -172,7 +209,7 @@
   transition: opacity .2s;
   border-style: solid;
   border-width: 0pt;
-  border-top-width: 0.5pt;
+  border-top-width: 0.5pt !important;
   border-color: #7e7e7e;
   display: flex;
   flex-direction: row;
@@ -184,7 +221,7 @@
   flex-basis: 32pt;
   border-style: solid;
   border-width: 0pt;
-  border-right-width: 0.5pt;
+  border-right-width: 0.5pt !important;
   border-color: #7e7e7e;
 }
 .Settings-IO {
@@ -310,6 +347,7 @@
   background:;
   overflow: auto;
   min-width: 400pt;
+  display: block;
 }
 .Script-Right {
   min-width: 96pt;

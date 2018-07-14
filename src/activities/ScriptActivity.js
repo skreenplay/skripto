@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import TextareaAutosize from 'react-autosize-textarea';
-const {remote, ipcRenderer, dialog} = window.require('electron');
+const {ipcRenderer} = window.require('electron');
 
 var skriptoLists = require('../lib/lists');
 
@@ -40,8 +40,6 @@ export default class ScriptActivity extends Component {
   _catchItemKeys(e, item) {
 
     this.props.onFileSaved(false);
-
-    var nextItemType = null;
     /*TODO : set specific item type for new item*/
 
     if (e.key === 'Tab' || e.key==='Enter'){
@@ -100,8 +98,6 @@ export default class ScriptActivity extends Component {
   render() {
 
     if (this.props.scripto) {
-
-      var scriptMetadata = this.props.scripto.getMetaData();
       var scriptContent = this.props.scripto.getScriptObjects().map((item) => {
         if (item.id===this.state.focusItem) {
           var reference = this.focusItemRef;

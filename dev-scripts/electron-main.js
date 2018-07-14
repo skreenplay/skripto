@@ -1,4 +1,4 @@
-const {app, BrowserWindow, globalShortcut, Menu, dialog, ipcMain, remote} = require('electron');
+const {app, BrowserWindow, globalShortcut, Menu, dialog, ipcMain} = require('electron');
 const process = require('process');
 const fs = require('fs');
 const pathlib = require('path');

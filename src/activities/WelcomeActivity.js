@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 const fs = window.require('fs');
-const {remote, ipcRenderer, dialog} = window.require('electron');
+const {ipcRenderer} = window.require('electron');
 const pathlib = window.require('path');
 var scripto = require('../lib/scriptosenso');
 

@@ -4,7 +4,7 @@ var Module = window.require('module');
 var process = window.require('process');
 const fs = window.require('fs');
 const vm = require('vm');
-const util = require('util');
+
 
 
 function getAvailablePlugins() {
@@ -20,7 +20,7 @@ function getAvailablePlugins() {
     ]
   }
   var pluginsPath = pathlib.join(process.resourcesPath, "plugins/")
-  var pluginsPath = pathlib.join('/Applications/Skripto.app/Contents/Resources/', "plugins/")
+  var pluginsPath = pathlib.join('/Applications/Skripto.app/Contents/Resources/', "plugins/") // only for dev
 
   fs.readdirSync(pluginsPath).forEach(function(folder) {
     if (folder!==".DS_Store"){
@@ -28,23 +28,31 @@ function getAvailablePlugins() {
 
       if (fs.existsSync(plPlugin)){
         fs.readdirSync(plPlugin).forEach(function(item) {
-          if (item==="manifest.json") {
-            var manifestFile = pathlib.join(plPlugin, item)
-            var config = JSON.parse(fs.readFileSync(manifestFile));
-            if (config.where) {
-              for (var i = 0; i < config.where.length; i++) {
-                var itemwhere = config.where[i];
-                var newPlugin = config;
-                newPlugin.path = pathlib.join(plPlugin,"plugin.js")
-                if (!pluginTree[itemwhere]) {
-                  pluginTree[itemwhere] = []
+          // required files
+          var manifestFile = pathlib.join(plPlugin, "manifest.json")
+          var pluginFile = pathlib.join(plPlugin, "plugin.js")
+          if (fs.existsSync(manifestFile) & fs.existsSync(pluginFile) ) {
+            if (item==="manifest.json") {
+              var manifestFile = pathlib.join(plPlugin, item)
+              var config = JSON.parse(fs.readFileSync(manifestFile));
+              if (config.where) {
+                for (var i = 0; i < config.where.length; i++) {
+                  var itemwhere = config.where[i];
+                  var newPlugin = config;
+                  newPlugin.path = pathlib.join(plPlugin,"plugin.js")
+                  if (!pluginTree[itemwhere]) {
+                    pluginTree[itemwhere] = []
+                  }
+                  pluginTree[itemwhere].push(newPlugin);
                 }
-                pluginTree[itemwhere].push(newPlugin);
               }
             }
-
+          } else {
+            console.error("One of the required files doesn't exist. Check out documentation at https://github.com/skreenplay/skripto/docs/plugins.md");
           }
         });
+      } else {
+        console.error('Plugin could not be found at : ' , plPlugin);
       }
     }
   });
@@ -58,10 +66,19 @@ function pluginFromPath(path) {
     React:React,
     Component:React.Component,
     module:{},
-    console:console
+    console:console,
+    imports: {
+      path:require('path'),
+      fetch:fetch,
+      JSON:JSON,
+    }
   })
-  let res = script.runInContext(context);
-  console.log(context);
+  try {
+    let res = script.runInContext(context);
+  } catch (e) {
+    console.error('Error while running the plugin : ', path);
+  }
+
   return context.Main;
 }
 
