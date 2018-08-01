@@ -48,7 +48,7 @@ function createWindow () {
   /* CREATE WINDOW */
   mainWindow = new BrowserWindow({width: userConfig.ui_width, height: userConfig.ui_height, titleBarStyle: 'hiddenInset', backgroundColor: '#F1EDE5', show:false});
   mainWindow.loadURL(openUrl);
-  /*mainWindow.webContents.openDevTools();*/
+  //mainWindow.webContents.openDevTools();
 
   /* MENU */
   const menu = Menu.buildFromTemplate([

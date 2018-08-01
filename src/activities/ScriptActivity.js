@@ -98,15 +98,35 @@ export default class ScriptActivity extends Component {
   render() {
 
     if (this.props.scripto) {
-      var scriptContent = this.props.scripto.getScriptObjects().map((item) => {
+
+      var scriptContent = this.props.scripto.getScriptObjects().map((item, index) => {
+        var isodd = index % 2;
         if (item.id===this.state.focusItem) {
           var reference = this.focusItemRef;
         } else {
           reference = null;
         }
-        if (item.type==="§P" || item.type==="§D"){
-          return (
+        return (
             <div className="Script-layout">
+              {
+                isodd===1 &&
+
+                <div className="Script-Item-Deco">
+                  <div className="true">
+
+                  </div>
+                </div>
+              }
+
+              {
+                isodd===0 &&
+
+                <div className="Script-Item-Deco">
+                  <div className="false">
+
+                  </div>
+                </div>
+              }
 
               <div className="Script-main" >
                 <span className="debug-info">{item.id} {item.type}</span>
@@ -126,40 +146,12 @@ export default class ScriptActivity extends Component {
                 {
                   item.id===this.state.focusItem &&
 
-                  <ScriptOptions onOptionSelected={(a)=>this._updateItemType(a)}/>
+                  <ScriptOptions onOptionSelected={(a)=>this._updateItemType(a)} style={this.props.style}/>
 
                 }
               </div>
             </div>
           )
-
-        } else {
-          return (
-            <div className="Script-layout">
-              <div className="Script-main">
-                <span className="debug-info">{item.id} {item.type}</span>
-                <input className={"scripto input "+item.type}
-                      type="text"
-                      name="Title"
-                      defaultValue={item.content}
-                      key={item.id.toString()+item.content.replace(" ", "-")}
-                      ref={reference}
-                      onChange={(e)=>this._onScriptUpdate(e, item)}
-                      onKeyDown={(e)=>this._catchItemKeys(e, item)}
-                      onFocus={(e)=>this._updateFocusItem(e,item)}
-                      >
-                      </input>
-              </div>
-              <div className="Script-Right">
-                {
-                  item.id===this.state.focusItem &&
-
-                  <ScriptOptions onOptionSelected={(a)=>this._updateItemType(a)}/>
-                }
-              </div>
-          </div>
-          )
-        }
 
       });
     } else {
@@ -168,6 +160,7 @@ export default class ScriptActivity extends Component {
 
     return (
       <div className="Whole-Script">
+
         {scriptContent}
       </div>
     )
@@ -181,7 +174,7 @@ class ScriptOptions extends Component {
   }
   render() {
     return (
-      <div className="Script-Item-Options">
+      <div className="Script-Item-Options" style={{borderColor:this.props.style.borderColor}}>
         <button className="Script-Item-Button" name="§S" onClick={() => {this._onOptionSelected('§S')}}>
           <span className="type">Scene</span><br/>
           <span className="shortcut">Cmd+1</span>
@@ -193,6 +186,10 @@ class ScriptOptions extends Component {
         <button className="Script-Item-Button" name="§D" onClick={() => {this._onOptionSelected('§D')}}>
           <span className="type">Dialog</span><br/>
           <span className="shortcut">Cmd+3</span>
+        </button>
+        <button className="Script-Item-Button" name="§P" onClick={() => {this._onOptionSelected('§P')}}>
+          <span className="type">Paragraph</span><br/>
+          <span className="shortcut">Cmd+4</span>
         </button>
         <button className="Script-Item-Button" name="§P" onClick={() => {this._onOptionSelected('§P')}}>
           <span className="type">Paragraph</span><br/>

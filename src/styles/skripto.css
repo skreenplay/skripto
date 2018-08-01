@@ -5,6 +5,7 @@
   display: block;
   width: 100%;
   padding: 1pt;
+  opacity: 0.2;
 }
 
 .scripto {
@@ -25,7 +26,8 @@
   color : #7e7e7e !important;
   overflow: hidden;
   margin: 0pt auto !important;
-
+  resize: none !important;
+  display: block;
 }
 .input:focus {
   border-width:0 !important;
@@ -42,12 +44,16 @@
   padding-bottom:7pt;
 }
 .scripto.§S {
-  text-align: center;
+  text-align: left;
   font-size: 12pt;
   padding-top:6pt;
-  padding-bottom:6pt;
-  width: 256pt;
-
+  padding-bottom:4pt;
+  width: calc(100% - 9pt) !important;
+  border-color: #7e7e7e !important;
+  border-width: 0.5pt !important;
+  border-radius: 3pt !important;
+}
+.scripto.§S:focus {
 }
 
 .scripto.§C {
@@ -55,7 +61,7 @@
   font-size: 12pt;
   text-transform: uppercase;
   padding-top:3pt;
-  padding-bottom:0pt;
+  padding-bottom:3pt;
   width: 256pt;
 
 }
@@ -86,6 +92,7 @@
   padding-top:2pt;
   padding-bottom:6pt;
   font-size: 12pt;
+  line-height: 18pt;
 }
 
 .scripto.§T {

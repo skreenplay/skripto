@@ -67,22 +67,22 @@ export default class WelcomeActivity extends Component {
       canCreate = <button className="CreateFile-save disabled">Create file</button>
     }
     return (
-      <div className="CreateFile-Layout">
-        <div className="CreateFile-Container">
-            <div className="CreateFile-Row Header">
-              <div className="CreateFile-Column Title">
+      <div className="CreateFile-Layout" >
+        <div className="CreateFile-Container" style={{borderColor: this.props.style.borderColor}}>
+            <div className="CreateFile-Row Header" style={{borderColor: this.props.style.borderColor}}>
+              <div className="CreateFile-Column Title" style={{borderColor: this.props.style.borderColor}}>
                 <h2 className="CreateFile-HeaderTitle">
                   Welcome to Skripto
                 </h2>
               </div>
             </div>
-            <div className="CreateFile-Row">
+            <div className="CreateFile-Row" style={{borderColor: this.props.style.borderColor}}>
               <div className="CreateFile-Column">
-                <h3 className="CreateFile-title">
+                <h3 className="CreateFile-title" style={{borderColor: this.props.style.borderColor}}>
                   Create new Project
                 </h3>
               </div>
-              <div className="CreateFile-Column">
+              <div className="CreateFile-Column" >
 
                   { this.state.newfilePath &&
                     <div>
@@ -100,9 +100,9 @@ export default class WelcomeActivity extends Component {
                 {canCreate}
               </div>
             </div>
-            <div className="CreateFile-Row Open">
-              <div className="CreateFile-Column">
-                <h3 className="CreateFile-title">
+            <div className="CreateFile-Row Open" style={{borderColor: this.props.style.borderColor}}>
+              <div className="CreateFile-Column" >
+                <h3 className="CreateFile-title" style={{borderColor: this.props.style.borderColor}}>
                   Open Project
                 </h3>
               </div>

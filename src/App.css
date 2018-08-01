@@ -67,6 +67,25 @@
   font-size: large;
 }
 
+.appTitleLayout {
+  align-items: center;
+  justify-content: center;
+}
+.appTitle {
+  text-align: right;
+  font-size: 9pt;
+  letter-spacing: 1.2pt;
+  padding-right: 4pt;
+  height:9pt;
+}
+.appVersion {
+  text-align: right;
+  font-size: 6pt;
+  text-transform: uppercase;
+  letter-spacing: 1pt;
+  padding-right: 4pt;
+  height:6pt;
+}
 
 .Layout-flex {
   display: flex;
@@ -87,12 +106,14 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  overflow: visible;
 }
 .Layout-main {
   display: flex;
   flex:1;
   flex-direction: row;
   position: relative;
+  overflow: visible;
 }
 
 .App-Title-Layout {
@@ -122,6 +143,7 @@
   position: relative;
   overflow: visible;
   float:right;
+  -webkit-app-region: no-drag;
 }
 .Toolbar-item {
   float:right;
@@ -152,6 +174,7 @@
   border-width: 0.5pt !important;
   border-radius: 3pt;
   color:#7e7e7e;
+  transition: background-color .3s;
 }
 .Toolbar-item.Error {
   background:red !important;
@@ -160,6 +183,41 @@
   line-height: 9pt;
   padding-left:1pt;
   border-color:#7e7e7e;
+}
+.Toolbar-item-menu ul, .node ul {
+  margin:0pt;
+  padding:0pt;
+  list-style-type: none;
+}
+.Toolbar-item-menu ul li, .node ul li {
+  border-color:rgba(30,30,30,0.2);
+  border-style: solid;
+  border-width: 0pt;
+  /*border-bottom-width: 0.5pt;*/
+  display:flex;
+  flex-direction: row;
+  padding:3pt;
+}
+.Toolbar-item-menu span, .node span {
+  font-size: 8pt;
+  line-height: 19pt;
+  height:18pt;
+  width: 70pt;
+  overflow: hidden
+}
+.Toolbar-item-menu input[type="text"], .node input[type="text"] {
+  width: 100%;
+  padding-top:2pt;
+  padding-bottom:2pt;
+  font-size: 8pt;
+  border-radius: 2pt
+}
+.Toolbar-item-menu button, .node button {
+  width: 100%;
+  padding-top:2pt;
+  padding-bottom:2pt;
+  font-size: 8pt;
+  height:18pt
 }
 
 
@@ -196,6 +254,9 @@
 }
 .Global-layout-choice.info {
   background-image:url('./icons/info.png');
+}
+.Global-layout-choice.mindmap {
+  background-image:url('./icons/mindmap.png');
 }
 .Global-layout-choice.write {
   background-image:url('./icons/pen.png');
@@ -330,8 +391,12 @@
   top:0;
   bottom:2pt;;
   padding:6pt;
+  padding-left: 0pt;
   padding-bottom:96pt;
   overflow-y:auto;;
+}
+.Whole-Script.no-padding {
+  padding:0pt;
 }
 
 .Script-layout {
@@ -340,6 +405,7 @@
   flex:1;
   flex-direction: row;
   align-items: stretch;
+  position: relative;
 }
 .Script-main {
   flex:0;
@@ -357,6 +423,27 @@
   position: relative;
   max-height: 12pt;
 }
+
+.Script-Item-Deco {
+  display: block;
+  flex:0;
+  flex-basis: 32pt;
+}
+.Script-Item-Deco .true {
+  display: block;
+  width: 1.5pt;
+  height:100%;
+  margin-left:1.5pt;
+  background: rgba(180,180,180,0.3);
+}
+.Script-Item-Deco .false {
+  display: block;
+  width: 1.5pt;
+  height:100%;
+  margin-left:1.5pt;
+  background: rgba(80,80,80,0.3);
+}
+
 .Script-Item-Options {
   display: block;
   position: absolute;
@@ -364,17 +451,21 @@
   right:0pt;
   min-width: 64pt;
   max-width: 256pt;
-  top:12pt;
+  top:8pt;
   height:76pt;
+  padding:2pt;
   border-style: solid;
   border-width: 0.5pt;
   border-color:#7e7e7e;
-  border-radius: 3.5pt;
-  opacity: .66
+  border-radius: 3pt;
+  opacity: .66;
 }
 
 .Script-Item-Button {
-  margin:3pt;
+  display: block;
+  float: left;
+  margin-left: 2.5pt;
+  margin-top:2.5pt;
   width: 64pt;
   height: 32pt;
   cursor: pointer;
@@ -489,10 +580,11 @@
   display: flex;
   height:100%;
   align-items: center;
+  overflow: visible;
 }
 .CreateFile-Container {
   width: 372pt;
-  height:256pt;
+  height:254pt;
   margin:0 auto;
   display: flex;
   flex:0;
@@ -501,8 +593,11 @@
   flex-direction: column;
   border-style: solid;
   border-width: 0.5pt;
-  border-radius: 1.5pt;
+  border-radius: 4pt;
   border-color:#7e7e7e;
+  transition: background-color .3s;
+  overflow: visible;
+
 }
 .CreateFile-Row {
   flex:1;
@@ -512,11 +607,17 @@
   border-width: 0pt;
   border-bottom-width: 0.5pt !important;
   border-color:#7e7e7e;
+  transition: background-color .3s;
+  overflow: visible;
+
 }
 .CreateFile-Column {
   flex:1;
   flex-direction:column;
   max-width: 186pt;
+  transition: background-color .3s;
+  overflow: visible;
+
 }
 .CreateFile-Column.Title {
   max-width:372pt;
@@ -533,6 +634,7 @@
   line-height: 48pt;
   padding:0pt;
   margin:0pt;
+  transition: background-color .3s;
 }
 .CreateFile-title {
   text-align: right;
@@ -547,11 +649,14 @@
   margin:0pt;
   padding-top:8pt;
   padding-right: 6pt;
+  transition: background-color .3s;
 }
 .CreateFile-Row.Open {
   flex:0;
   flex-basis: 68pt;
+  border-style: solid;
   border-width: 0pt !important;
+  transition: background-color .3s;
 }
 
 .CreateFile-filePath {
@@ -612,6 +717,7 @@
 .CreateFile-save.disabled {
   opacity: 0.4;
   background: rgba(80,80,80,0.1);
+  border-style: solid;
   border-color:#7e7e7e;
   color:#7e7e7e;
   cursor: normal;
@@ -688,3 +794,83 @@
    max-height: 64pt;
    padding: 6pt;
  }
+
+
+ .MindMap-Layout {
+   position: relative;
+   display: block;
+   width: 100%;
+   height:100%;
+   margin:0pt;
+   padding:0pt;
+   overflow: hidden;
+ }
+ .MindMap-Overlay {
+   position: absolute;
+   left:0;
+   top: 0;
+   width: 100%;
+   height:100%;
+   padding:0pt;
+   margin:0pt;
+ }
+ .MindMap-Items {
+   position: absolute;
+   left:0;
+   top: 0;
+   width: 100%;
+   height:100%;
+   padding:0pt;
+   margin:0pt;
+ }
+ .MindMap-Canvas {
+   transition: background-color .3s;
+ }
+ .MindMap-Item {
+   border-style: solid;
+   border-width: 0.5pt !important;
+   border-radius: 3pt;
+   border-color: #7e7e7e;
+   box-shadow: 0pt 0pt 0pt 3pt rgba(40,40,40,0.1);
+   transition: background-color .3s, border-color .3s;
+ }
+ .MindMap-Item-Header {
+   height:20pt;
+   padding:3pt;
+   background:rgba(150,150,150,0.1);
+   display: flex;
+   flex-direction: row;
+   cursor: move;
+ }
+.MindMap-Item-Header button {
+   height: 20pt;
+   width: 20pt;
+   text-align: center;
+   flex:0;
+   flex-basis: 20pt;
+   cursor: pointer;
+   background-size: cover;
+   background-position: center;
+   background-image:url('../src/icons/close.png');
+   border-width: 0pt !important;
+ }
+ .MindMap-Item-Header button:hover {
+   background-size: cover;
+   background-position: center;
+   background-image:url('../src/icons/close.png');
+ }
+.MindMap-Item-Header .title {
+  flex:1;
+  cursor: move;
+}
+.MindMap-Item-Content {
+  height: calc(100% - 26pt);
+}
+.MindMap-Item textarea {
+  margin:1.5pt;
+  width: calc( 100% - 10.5pt);
+  height: calc(100% - 10.5pt);
+  padding:3pt;
+  resize:none;
+  -webkit-user-select: all
+}

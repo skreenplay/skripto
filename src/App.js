@@ -11,6 +11,7 @@ import TreeView from './components/TreeView';
 import WelcomeActivity from './activities/WelcomeActivity';
 import ControlActivity from './activities/ControlActivity';
 import ScriptActivity from './activities/ScriptActivity';
+import MindMapActivity from './activities/MindMapActivity';
 
 import Toolbar from './components/Toolbar';
 
@@ -258,17 +259,19 @@ class Main extends Component {
       <div className="App">
           <header className="App-header" style={{backgroundColor:headerColor, borderColor:borderColor}}>
             <div className="Layout-flex">
-              <div className="Layout-left" style={{borderColor:borderColor}}></div>
+              <div className="Layout-left appTitleLayout" style={{borderColor:borderColor}}>
+                  <span className="appTitle" style={{color:borderColor}}>Skripto</span>
+                  <span className="appVersion" style={{color:borderColor}}>Version 0.1.2</span>
+              </div>
               <div className="Layout-main">
                 <div className="App-Title-Layout">
-                  <p className="App-title">Skripto {this.state.scripto && scriptMetadata.title}</p>
+                  <p className="App-title">{this.state.scripto && scriptMetadata.title}</p>
                 </div>
                 <div className="Toolbar-Layout" >
                   <div className="Toolbar-Switch" style={{borderColor:borderColor}}>
-                    <label className="switch">
-                      <input type="checkbox" onChange={(e) => this.ui_onLightMode(e) } checked={this.state.lightMode}/>
-                      <span className="slider round"></span>
-                      <p className="label">{uiLighState}</p>
+                    <label className="switch" style={{backgroundColor:borderColor}}>
+                      <input type="checkbox" id="lightmode" onChange={(e) => this.ui_onLightMode(e) } checked={this.state.lightMode}/>
+                      <label for="lightmode" style={{backgroundColor:contentColor}}>{uiLighState}</label>
 
                     </label>
                   </div>
@@ -285,7 +288,7 @@ class Main extends Component {
                   <div className="Global-layout-choicebox" style={{borderColor:borderColor}}>
                     <a className="Global-layout-choice info" onClick={()=>{this.ui_changeActivity('control')}} ></a>
                     <a className="Global-layout-choice write" onClick={()=>{this.ui_changeActivity('write')}} ></a>
-                    <a className="Global-layout-choice info" ></a>
+                    <a className="Global-layout-choice mindmap" onClick={()=>{this.ui_changeActivity('mindmap')}} ></a>
                   </div>
                   <div className="Global-layout-content">
                     {
@@ -333,14 +336,14 @@ class Main extends Component {
 
                   <div className="Whole-Script">
 
-                    <WelcomeActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} onFileCreated={(f, scripto) => this._newFileCreated(f, scripto)} />
+                    <WelcomeActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} onFileCreated={(f, scripto) => this._newFileCreated(f, scripto)} style={style}/>
                   </div>
                 }
                 {
                   this.state.activity==="write" && this.state.file &&
 
                   <div className="Whole-Script">
-                    <ScriptActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} />
+                    <ScriptActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)}  style={style}/>
                   </div>
                 }
 
@@ -349,6 +352,13 @@ class Main extends Component {
 
                   <div className="Whole-Script">
                     <ControlActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} />
+                  </div>
+                }
+                {
+                  this.state.activity==='mindmap' && this.state.file &&
+
+                  <div className="Whole-Script no-padding">
+                    <MindMapActivity scripto={this.state.scripto} onFileSaved={(b) => this._changeSavedState(b)} style={style}/>
                   </div>
                 }
               </div>

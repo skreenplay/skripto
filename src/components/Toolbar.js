@@ -46,7 +46,7 @@ class ToolbarContainer extends Component {
             {
               this.state.panelOpen && this.props.panel &&
 
-              <div className="Toolbar-item-menu" style={this.props.style}>
+              <div className="Toolbar-item-menu" style={{...this.props.style, ...{height:this.props.config.height}}}>
                 <this.props.plugin.ToolbarMenu scripto={this.props.scripto} onFileSaved={(e)=>this.props.onFileSaved(e)}/>
               </div>
             }
@@ -90,6 +90,7 @@ export default class Toolbar extends Component {
                 onFileSaved={(e)=>that.props.onFileSaved(e)}
                 panel={toolbarPanel}
                 plugin={plugin}
+                config={item.config.Toolbar}
                 style={that.props.style}
                 />
             )

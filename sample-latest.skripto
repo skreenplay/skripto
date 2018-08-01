@@ -23,21 +23,59 @@
     ]
   },
   "script": [
-    "§S This is a scene",
+    "§S INT. House - DAY 1 ",
     "§C Character",
     "§D First item",
     "§D Polo",
     "§D Hi, this is dialo",
     "§D This is some text",
     "§D Testing the validity of the test",
-    "§D léé",
+    "§C CHARACTER",
     "§CA (this is very interestin",
-    "§P Paragraph (describes a setting or an action)\nkljsalfjlas\nlkdjsalkfjlasd\nkkasdlkflk",
+    "§P Paragraph (describes a setting or an action) lkdjsalkfjlasd\nkkasdlkflk",
     "§P klkasjlkf",
-    "§P Hi, this is a paragraph. One difference being that if you press enter, it will change to a new item"
+    "§P Hi, this is a paragraph. One difference being that if you press enter, it will change to a new item",
+    "§C LARA",
+    "§CA (sneezes)",
+    "§D Oh, sorry 'bout that",
+    "§D "
   ],
   "filetype": {
     "version": "0.0.4å",
     "url": "https://github.com/skreenplay/skripto"
+  },
+  "mindmap": {
+    "config": {
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "items": [
+      {
+        "x": 12,
+        "y": 35,
+        "w": 350,
+        "h": 250,
+        "title": "Start",
+        "type": "text-simple",
+        "data": {
+          "body": "This is a sample story.\nIt starts with the writing of the code,\nthen suddenly, someone sees it and changes it.\n"
+        },
+        "id": 0
+      },
+      {
+        "x": 817,
+        "y": 599,
+        "w": 350,
+        "h": 250,
+        "title": "End",
+        "type": "text-simple",
+        "data": {
+          "body": "This is a conclusion"
+        },
+        "id": 1
+      }
+    ]
   }
 }

@@ -151,6 +151,52 @@ function Skripto() {
   this.getScriptObjects = function () {return getScriptObjects(this.data.script)}
   this.getScriptTree = function() {return getScriptTree('screenplay',this.data)}
 
+  this.getMindMap = function() {
+
+    if (this.data.mindmap) {
+        var mind = this.data.mindmap
+    } else {
+      mind = {
+        config: {
+          position: {
+            x:0,
+            y:0
+          }
+        },
+        items:[
+          {
+            x:110,
+            y:100,
+            w:150,
+            h:250,
+            title:"Start",
+            type:"text-simple",
+            data:{
+              body:"This is just some text, a synopsis or an initial situation"
+            }
+          },
+          {
+            x:800,
+            y:100,
+            w:150,
+            h:250,
+            title:"End",
+            type:"text-simple",
+            data:{
+              body:"Conclusion to the story"
+            }
+          }
+        ]
+      }
+    }
+    this.data.mindmap = mind;
+    return mind
+
+  }
+  this.setMindMap = function(mindmap) {
+    this.data.mindmap = mindmap
+  }
+
   this.getScriptItem = function (itemid) {
     var scItem = null;
     var sco =  getScriptObjects(this.data.script);

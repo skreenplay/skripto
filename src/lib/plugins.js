@@ -20,7 +20,11 @@ function getAvailablePlugins() {
     ]
   }
   var pluginsPath = pathlib.join(process.resourcesPath, "plugins/")
-  var pluginsPath = pathlib.join('/Applications/Skripto.app/Contents/Resources/', "plugins/") // only for dev
+  if (fs.existsSync(pluginsPath)) {
+    console.log('found plugins path');
+  } else {
+    var pluginsPath = pathlib.join('/Applications/Skripto.app/Contents/Resources/', "plugins/") // only for dev
+  }
 
   fs.readdirSync(pluginsPath).forEach(function(folder) {
     if (folder!==".DS_Store"){
